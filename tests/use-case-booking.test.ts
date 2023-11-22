@@ -1,31 +1,10 @@
-import {describe, expect, test} from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
-import useCaseBooking from '../src/use-case-booking';
+
 import useCaseBeddingSetsStatusReport from '../src/use-case-bedding-sets-status-report';
-
+import { BeddingSetsStatusReport } from '../src/interfaces/bedding-sets-status-report';
 const date_zero = new Date(0);
-
-/*
-xdescribe('useCaseBooking', () => {
-  it('should return the correct booking information', () => {
-    // Test input
-    const bookingData = {
-      date: date_zero,
-    };
-
-    // Expected output
-    const expectedBookingInfo = {
-      // ... expected output ...
-    };
-
-    // Call the function
-    const result = useCaseBooking(bookingData);
-
-    // Assert the result
-    expect(result).toEqual(expectedBookingInfo);
-  });
-});
-*/
+const day = 24 * 3600 * 1000;
 
 describe('beddingSetStatusReport', () => {
   it('should return all bedding sets cleaned at begin of process', () => {
@@ -35,11 +14,14 @@ describe('beddingSetStatusReport', () => {
     // Call the function
     useCaseBeddingSetsStatusReport().addBeddingSets(amountOfBeddingSet);
 
-    const report =useCaseBeddingSetsStatusReport().report(5)
+    const report: BeddingSetsStatusReport = useCaseBeddingSetsStatusReport().report(date_zero, 5);
 
     // Assert the result
-    expect(report.days.length).toEqual(5);
-
+    expect(report.days.length).toEqual(6);
+    
+    expect(report.days[0]).toEqual({ date: date_zero });
+    expect(report.days[1]).toEqual({ date: new Date(1 * day) });
+    expect(report.days[4]).toEqual({ date: new Date(4 * day) });
   });
 });
 
