@@ -21,7 +21,7 @@ describe('beddingSetStatusReport', () => {
     
     expect(report.days[0]).toEqual({ date: date_zero });
     expect(report.days[1]).toEqual({ date: new Date(1 * day) });
-    expect(report.days[4]).toEqual({ date: new Date(4 * day) });
+    expect(report.days[5]).toEqual({ date: new Date(5 * day) });
   });
 });
 

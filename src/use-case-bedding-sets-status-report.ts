@@ -8,17 +8,14 @@ export default function useCaseBeddingSetsStatusReport() {
         },
 
         report: (date_zero: Date, forecastDays: number): BeddingSetsStatusReport => {
-            const luxon_date_zero = DateTime.fromJSDate(date_zero);
+            const date_time_zero = DateTime.fromJSDate(date_zero);
 
             const report: BeddingSetsStatusReport = {
-                days: [
-                    { date: luxon_date_zero.toJSDate() },
-                    { date: luxon_date_zero.plus({ days: 1 }).toJSDate() },
-                    { date: luxon_date_zero.plus({ days: 2 }).toJSDate() },
-                    { date: luxon_date_zero.plus({ days: 3 }).toJSDate() },
-                    { date: luxon_date_zero.plus({ days: 4 }).toJSDate() },
-                    { date: luxon_date_zero.plus({ days: 5 }).toJSDate() }
-                ]
+                days: Array.from({ length: forecastDays + 1 }, (_, index) => {
+                    return {
+                        date: date_time_zero.plus({ days: index }).toJSDate()
+                    };
+                })
             }
 
             return report;
