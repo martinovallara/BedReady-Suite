@@ -1,5 +1,5 @@
 export interface BeddingSetsStatusReport {
-    days: BeddingSetsStatus[]; // Replace `any` with the appropriate type for the `days` array
+    days: BeddingSetsStatus[];
   }
 
 export interface BeddingSetsStatus extends BeddingSetsState {

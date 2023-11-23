@@ -1,35 +1,35 @@
 import { DateTime } from "luxon"
 import { BeddingSetsStatusReport, Booking, BeddingSetsStatus, BeddingSetsState } from "./interfaces/bedding-sets-status-report"
+import BeddingSets from "./domain/bedding-sets-state";
 
 export default function useCaseBeddingSetsStatusReport() {
 
     const bookingConfirmed: Booking[] = [];
 
-    let beddingSets: number = 0;
+    //let beddingSets: number = 0;
 
-    let beddingSetsState: BeddingSetsState = {
-        cleaned: 0,
-        in_use: 0,
-        dirty: 0,
-        in_laundery: 0
-    };
+    let beddingSets =  new BeddingSets();
 
     const beddingSetsStatus = (dateTimeZero: DateTime, days: number): BeddingSetsStatus => {        
         const current_date = dateTimeZero.plus({ days: days });
 
         if (bookingConfirmed.some(booking => onCheckIn(booking, current_date))) {
-            beddingSetsState.cleaned -= 2;
-            beddingSetsState.in_use += 2;
+            beddingSets.onCheckIn(2);
         } 
 
         if (bookingConfirmed.some(booking => onCheckOut(booking, current_date))) {
-            beddingSetsState.in_use -= 2;
-            beddingSetsState.dirty += 2;
+            beddingSets.onCheckOut(2)
         }
+
+        // cast beddingSets to BeddingSetsState
+        const beddingSetsState: BeddingSetsState = beddingSets as BeddingSetsState;
 
         return {
             date: current_date.toJSDate(),
-            ...beddingSetsState
+            cleaned: beddingSetsState.cleaned,
+            in_use: beddingSetsState.in_use,
+            dirty: beddingSetsState.dirty,
+            in_laundery: beddingSetsState.in_laundery
         };
     }
 
@@ -43,8 +43,7 @@ export default function useCaseBeddingSetsStatusReport() {
 
     return {
         addBeddingSets: (amountOfBeddingSets: number): void => {
-            beddingSets += amountOfBeddingSets;
-            beddingSetsState.cleaned += amountOfBeddingSets;
+            beddingSets.addBeddingSets(amountOfBeddingSets);
         },
 
         report: (date_zero: Date, forecastDays: number): BeddingSetsStatusReport => {
