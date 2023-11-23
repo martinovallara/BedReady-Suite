@@ -14,7 +14,8 @@ export interface BeddingSetsState {
 }
 
 export interface Booking {
-  check_in_date: Date,
-  check_out_date: Date,
-  bedding_sets: number
+  checkInDate: Date,
+  checkOutDate: Date,
+  beddingSets: number
 }
+
