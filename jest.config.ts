@@ -8,8 +8,7 @@ import {defaults} from 'jest-config';
 
 const config: Config = {
   verbose: true,
-  moduleFileExtensions: [...defaults.moduleFileExtensions, 'mts'],
-  reporters: ['default', ''],
+  moduleFileExtensions: [...defaults.moduleFileExtensions, 'mts']
 };
 
 export default config;
