@@ -2,8 +2,11 @@ export interface BeddingSetsStatusReport {
     days: BeddingSetsStatus[]; // Replace `any` with the appropriate type for the `days` array
   }
 
-export interface BeddingSetsStatus {
+export interface BeddingSetsStatus extends BeddingSetsState {
     date: Date;
+}
+
+export interface BeddingSetsState {
     cleaned: number;
     in_use: number;
     dirty: number;
