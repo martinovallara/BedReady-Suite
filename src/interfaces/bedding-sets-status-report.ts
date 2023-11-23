@@ -1,21 +1,20 @@
-export interface BeddingSetsStatusReport {
-    days: BeddingSetsStatus[];
-  }
+export type BeddingSetsStatusReport = {
+  days: BeddingSetsStatus[];
+};
 
-export interface BeddingSetsStatus extends BeddingSetsState {
-    date: Date;
-}
+export type BeddingSetsStatus = BeddingSetsState & {
+  date: Date;
+};
 
-export interface BeddingSetsState {
-    cleaned: number;
-    in_use: number;
-    dirty: number;
-    in_laundery: number;
-}
+export type BeddingSetsState = {
+  cleaned: number;
+  in_use: number;
+  dirty: number;
+  in_laundery: number;
+};
 
-export interface Booking {
-  checkInDate: Date,
-  checkOutDate: Date,
-  beddingSets: number
-}
-
+export type Booking = {
+  checkInDate: Date;
+  checkOutDate: Date;
+  beddingSets: number;
+};
