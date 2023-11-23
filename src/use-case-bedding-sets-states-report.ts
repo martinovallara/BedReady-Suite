@@ -1,18 +1,16 @@
 import { DateTime } from "luxon"
-import { BeddingSetsStatusReport, Booking, BeddingSetsStatus, BeddingSetsState } from "./interfaces/bedding-sets-status-report"
+import { BeddingSetsStatesReport, Booking, BeddingSetsStateOnDate, BeddingSetsState } from "./interfaces/bedding-sets-states-report"
 import BeddingSets from "./domain/bedding-sets-state";
 
-export default function useCaseBeddingSetsStatusReport() {
+export default function useCaseBeddingSetsStatesReport() {
 
     const bookingConfirmed: Booking[] = [];
 
     let beddingSets =  new BeddingSets();
 
-    const beddingSetsStatus = (dateTimeZero: DateTime, days: number): BeddingSetsStatus => {        
+    const beddingSetsStatus = (dateTimeZero: DateTime, days: number): BeddingSetsStateOnDate => {        
         const current_date = dateTimeZero.plus({ days: days });
 
-        // find booking that the check in date match current date
- 
         const checkInBooking = bookingConfirmed.find(booking => onCheckIn(booking, current_date));
         const checkOutBooking = bookingConfirmed.find(booking => onCheckOut(booking, current_date));
 
@@ -50,10 +48,10 @@ export default function useCaseBeddingSetsStatusReport() {
             beddingSets.addBeddingSets(amountOfBeddingSets);
         },
 
-        report: (date_zero: Date, forecastDays: number): BeddingSetsStatusReport => {
+        report: (date_zero: Date, forecastDays: number): BeddingSetsStatesReport => {
             const date_time_zero = DateTime.fromJSDate(date_zero);
 
-            const report: BeddingSetsStatusReport = {
+            const report: BeddingSetsStatesReport = {
                 days: Array.from({ length: forecastDays + 1 }, (_, index) => {
                     return beddingSetsStatus(date_time_zero, index);
                 })

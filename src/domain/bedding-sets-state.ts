@@ -1,4 +1,4 @@
-import { BeddingSetsState } from "../interfaces/bedding-sets-status-report";
+import { BeddingSetsState } from "../interfaces/bedding-sets-states-report";
 
 export default class BeddingSets implements BeddingSetsState  {
     cleaned: number = 0;

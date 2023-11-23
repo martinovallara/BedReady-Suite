@@ -1,21 +1,21 @@
 import { describe, expect, test } from '@jest/globals';
-import useCaseBeddingSetsStatusReport from '../src/use-case-bedding-sets-status-report';
-import { BeddingSetsStatusReport, Booking } from '../src/interfaces/bedding-sets-status-report';
+import useCaseBeddingSetsStatesReport from '../src/use-case-bedding-sets-states-report';
+import { BeddingSetsStatesReport, Booking } from '../src/interfaces/bedding-sets-states-report';
 
 const date_zero = new Date(0);
 const day = 24 * 3600 * 1000;
-let report: BeddingSetsStatusReport;
+let report: BeddingSetsStatesReport;
 const amountOfBeddingSet = 9;
-let beddingSetsStatusReport;
+let beddingSetsstatesReport;
 
 beforeEach(() => {
-  beddingSetsStatusReport = useCaseBeddingSetsStatusReport();
-  beddingSetsStatusReport.addBeddingSets(amountOfBeddingSet);
+  beddingSetsstatesReport = useCaseBeddingSetsStatesReport();
+  beddingSetsstatesReport.addBeddingSets(amountOfBeddingSet);
 
-  report = beddingSetsStatusReport.report(date_zero, 5);
+  report = beddingSetsstatesReport.report(date_zero, 5);
 })
 
-describe('beddingSetStatusReport', () => {
+describe('beddingSetstatesReport', () => {
   it('should return all bedding sets cleaned at begin of process', () => {
     expect(report.days.length).toEqual(6);
 
@@ -39,9 +39,9 @@ describe('beddingSetStatusReport', () => {
         beddingSets: sets
       }
 
-      beddingSetsStatusReport.bookingConfirmed(booking);
+      beddingSetsstatesReport.bookingConfirmed(booking);
 
-      const report: BeddingSetsStatusReport = beddingSetsStatusReport.report(date_zero, 5);
+      const report: BeddingSetsStatesReport = beddingSetsstatesReport.report(date_zero, 5);
 
       expect(report.days.length).toEqual(6);
 
@@ -64,9 +64,9 @@ describe('beddingSetStatusReport', () => {
         beddingSets: sets
       }
 
-      beddingSetsStatusReport.bookingConfirmed(booking);
+      beddingSetsstatesReport.bookingConfirmed(booking);
 
-      const report: BeddingSetsStatusReport = beddingSetsStatusReport.report(date_zero, 5);
+      const report: BeddingSetsStatesReport = beddingSetsstatesReport.report(date_zero, 5);
 
       expect(report.days.length).toEqual(6);
 

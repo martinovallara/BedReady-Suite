@@ -1,8 +1,8 @@
-export type BeddingSetsStatusReport = {
-  days: BeddingSetsStatus[];
+export type BeddingSetsStatesReport = {
+  days: BeddingSetsStateOnDate[];
 };
 
-export type BeddingSetsStatus = BeddingSetsState & {
+export type BeddingSetsStateOnDate = BeddingSetsState & {
   date: Date;
 };
 
