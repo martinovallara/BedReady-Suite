@@ -21,15 +21,14 @@ export default function useCaseBeddingSetsStatusReport() {
             beddingSets.onCheckOut(2)
         }
 
-        // cast beddingSets to BeddingSetsState
-        const beddingSetsState: BeddingSetsState = beddingSets as BeddingSetsState;
+        const { cleaned, in_use, dirty, in_laundery } = beddingSets as BeddingSetsState;
 
         return {
-            date: current_date.toJSDate(),
-            cleaned: beddingSetsState.cleaned,
-            in_use: beddingSetsState.in_use,
-            dirty: beddingSetsState.dirty,
-            in_laundery: beddingSetsState.in_laundery
+          date: current_date.toJSDate(),
+          cleaned,
+          in_use,
+          dirty,
+          in_laundery
         };
     }
 
