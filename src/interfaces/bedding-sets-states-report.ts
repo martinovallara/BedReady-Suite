@@ -10,6 +10,7 @@ export type BeddingSetsState = {
   cleaned: number;
   in_use: number;
   dirty: number;
+  cleaning: number;
   in_laundery: number;
 };
 

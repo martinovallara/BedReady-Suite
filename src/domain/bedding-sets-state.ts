@@ -1,13 +1,12 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report";
 
-export default class BeddingSets implements BeddingSetsState  {
-
+export default class BeddingSets implements BeddingSetsState {
 
     cleaned: number = 0;
     in_use: number = 0;
-    dirty: number   = 0;
+    dirty: number = 0;
+    cleaning: number = 0;
     in_laundery: number = 0;
-
 
     onCheckIn: (beddingSets: number) => void = (beddingSets: number) => {
         this.cleaned -= beddingSets;
@@ -20,13 +19,17 @@ export default class BeddingSets implements BeddingSetsState  {
     }
 
     addBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
-        //beddingSets += amountOfBeddingSets;
         this.cleaned += amountOfBeddingSets;
     }
 
     onDeliveryToLaundry(sets: number) {
-        this.in_laundery += sets;
+        this.cleaning += sets;
         this.dirty -= sets;
+    }
+
+    onFinishCleaning(sets: number) {
+        this.cleaning -= sets;
+        this.in_laundery += sets;
     }
 
     onPickupLaundry(sets: number) {

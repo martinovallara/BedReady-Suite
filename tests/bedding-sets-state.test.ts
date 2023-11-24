@@ -39,14 +39,26 @@ describe('BeddingSets', () => {
         expect(beddingSets.in_laundery).toBe(0);
     })
 
-    test('onDeliveryToLaundry remove sets from dirty and add to laundery', () => {
+    test('onDeliveryToLaundry remove sets from dirty and add to claaning', () => {
         const beddingSets = new BeddingSets();
         beddingSets.onDeliveryToLaundry(1);
         expect(beddingSets.cleaned).toBe(0);
         expect(beddingSets.in_use).toBe(0);
         expect(beddingSets.dirty).toBe(-1);
+        expect(beddingSets.cleaning).toBe(1);
+        expect(beddingSets.in_laundery).toBe(0);
+    })
+
+    test('onFinishCleaning remove sets from cleaning and add to in laundry', () => {
+        const beddingSets = new BeddingSets();
+        beddingSets.onFinishCleaning(1);
+        expect(beddingSets.cleaned).toBe(0);
+        expect(beddingSets.in_use).toBe(0);
+        expect(beddingSets.dirty).toBe(0);
+        expect(beddingSets.cleaning).toBe(-1);
         expect(beddingSets.in_laundery).toBe(1);
     })
+
 
     test('onPickupLaundry remove sets from laundery and add to clean', () => {
         const beddingSets = new BeddingSets();
@@ -54,6 +66,7 @@ describe('BeddingSets', () => {
         expect(beddingSets.cleaned).toBe(1);
         expect(beddingSets.in_use).toBe(0);
         expect(beddingSets.dirty).toBe(0);
+        expect(beddingSets.cleaning).toBe(0);
         expect(beddingSets.in_laundery).toBe(-1);
     })
 })
