@@ -1,31 +1,37 @@
 import { DateTime } from "luxon"
-import { BeddingSetsStatesReport, Booking, BeddingSetsStateOnDate, BeddingSetsState } from "./interfaces/bedding-sets-states-report"
+import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, Event } from "./interfaces/bedding-sets-states-report"
 import BeddingSets from "./domain/bedding-sets-state";
 
-type delivery = {
+export type Booking = {
+    checkInDate: Date;
+    checkOutDate: Date;
+    beddingSets: number;
+};
+
+type Delivery = {
     date: Date;
     sets: number;
     cleaningTime: number;
 };
 
-type pickup = {
+type Pickup = {
     date: Date;
     sets: number;
 };
 
 export default class UseCaseBeddingSetsStatesReport {
 
+    beddingSets: BeddingSets;
 
     bookingsConfirmed: Booking[];
-    beddingSets: BeddingSets;
-    deliveries: delivery[];
-    pickups: pickup[];
+    deliveries: Delivery[];
+    pickups: Pickup[];
 
     constructor() {
         this.beddingSets = new BeddingSets();
-        this.bookingsConfirmed = []; 
+        this.bookingsConfirmed = [];
         this.deliveries = [];
-        this.pickups = [];   
+        this.pickups = [];
     }
 
     addBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
@@ -46,11 +52,11 @@ export default class UseCaseBeddingSetsStatesReport {
     bookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
         this.bookingsConfirmed.push(booking);
     };
-    onDeliveryToLaundry(Delivery: delivery) {
+    onDeliveryToLaundry(Delivery: Delivery) {
         this.deliveries.push(Delivery);
     }
 
-    onPickupLaundry(pickup: pickup) {
+    onPickupLaundry(pickup: Pickup) {
         this.pickups.push(pickup);
     }
 
@@ -89,6 +95,7 @@ export default class UseCaseBeddingSetsStatesReport {
 
         return {
             date: current_date.toJSDate(),
+            events: this.getEvents(checkInBooking, checkOutBooking, delivery, pickup),
             cleaned,
             in_use,
             dirty,
@@ -97,14 +104,32 @@ export default class UseCaseBeddingSetsStatesReport {
         };
     };
 
-    private onCheckOut:  (booking: Booking, current_date: DateTime)=> boolean = (booking: Booking, current_date: DateTime) => {
+    private onCheckOut: (booking: Booking, current_date: DateTime) => boolean = (booking: Booking, current_date: DateTime) => {
         const checkOut = DateTime.fromJSDate(booking.checkOutDate);
         return checkOut.toMillis() === current_date.toMillis();
     };
 
-    private onCheckIn: (booking: Booking, current_date: DateTime)=> boolean = (booking: Booking, current_date: DateTime) => {
+    private onCheckIn: (booking: Booking, current_date: DateTime) => boolean = (booking: Booking, current_date: DateTime) => {
         const checkIn = DateTime.fromJSDate(booking.checkInDate);
         return checkIn.toMillis() === current_date.toMillis();
     };
+
+    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, delivery?: Delivery, pickup?: Pickup): Event[]  {
+        const events: Event[] = [];
+        if (checkInBooking) {
+            events.push('Check In');
+        }
+        if (checkOutBooking) {
+            events.push('Check Out');
+        }
+        if (delivery) {
+            events.push('Delivery');
+        }
+        if (pickup) {
+            events.push('Pickup');
+        }
+        return events;
+
+    }
 
 }
