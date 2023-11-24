@@ -8,16 +8,24 @@ type delivery = {
     cleaningTime: number;
 };
 
+type pickup = {
+    date: Date;
+    sets: number;
+};
+
 export default class UseCaseBeddingSetsStatesReport {
+
 
     bookingsConfirmed: Booking[];
     beddingSets: BeddingSets;
     deliveries: delivery[];
+    pickups: pickup[];
 
     constructor() {
         this.beddingSets = new BeddingSets();
         this.bookingsConfirmed = []; 
-        this.deliveries = [];   
+        this.deliveries = [];
+        this.pickups = [];   
     }
 
     addBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
@@ -42,6 +50,10 @@ export default class UseCaseBeddingSetsStatesReport {
         this.deliveries.push(Delivery);
     }
 
+    onPickupLaundry(pickup: pickup) {
+        this.pickups.push(pickup);
+    }
+
     beddingSetsStatus = (dateTimeZero: DateTime, days: number): BeddingSetsStateOnDate => {
         const current_date = dateTimeZero.plus({ days: days });
 
@@ -50,6 +62,8 @@ export default class UseCaseBeddingSetsStatesReport {
 
         const delivery = this.deliveries.find(delivery => DateTime.fromJSDate(delivery.date).toMillis() === current_date.toMillis());
         const onFinishCleaning = this.deliveries.find(delivery => DateTime.fromJSDate(delivery.date).plus({ days: delivery.cleaningTime + 1 }).toMillis() === current_date.toMillis());
+
+        const pickup = this.pickups.find(pickup => DateTime.fromJSDate(pickup.date).toMillis() === current_date.toMillis());
 
         if (checkInBooking) {
             this.beddingSets.onCheckIn(checkInBooking.beddingSets);
@@ -65,6 +79,10 @@ export default class UseCaseBeddingSetsStatesReport {
 
         if (onFinishCleaning) {
             this.beddingSets.onFinishCleaning(onFinishCleaning.sets);
+        }
+
+        if (pickup) {
+            this.beddingSets.onPickupLaundry(pickup.sets);
         }
 
         const { cleaned, in_use, dirty, cleaning, in_laundery } = this.beddingSets as BeddingSetsState;
