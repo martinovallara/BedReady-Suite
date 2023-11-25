@@ -1,7 +1,9 @@
 import { DateTime } from 'luxon';
-import UseCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report';
+
 
 import Table from 'cli-table3';
+import UseCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report';
+import chalk from 'chalk';
 
 const date_zero = new Date(0);
 const day = 24 * 3600 * 1000;
@@ -28,8 +30,8 @@ beddingSetsStatesReport.onDeliveryToLaundry({ date: new Date(4 * day), sets: 2, 
 
 // instantiate
 const table_bedding_sets = new Table({
-  head: ['data', 'eventi' ,'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia'],
-  style: { 'padding-left': 1, 'padding-right': 1, head: [], border: [] } // Add style property
+  head: ['data', 'eventi', 'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia'],
+  style: { 'padding-left': 1, 'padding-right': 1 } // Add style property
 });
 
 const report = beddingSetsStatesReport.report(date_zero, 20);
@@ -38,18 +40,20 @@ const report_table = report.days.map((day) => {
   return [
     DateTime.fromJSDate(day.date).setLocale('it').toFormat('ccc dd LLL yyyy'),
     day.events.toString(),
-    day.cleaned.toString(),
-    day.in_use.toString(),
-    day.dirty.toString(),
-    day.cleaning.toString(),
-    day.in_laundery.toString()
+    chalk['greenBright']('■'.repeat(day.cleaned)),
+    chalk['yellow']('■'.repeat(day.in_use)),
+    chalk['redBright']('■'.repeat(day.dirty)),
+    chalk['magenta']('■'.repeat(day.cleaning)),
+    chalk['green']('■'.repeat(day.in_laundery))
   ]
 })
 
+
 // table is an Array, so you can `push`, `unshift`, `splice` and friends
 report_table.forEach((row) => {
-  const row_trasformed = row.map((cell) => {
-    return  { content: cell, hAlign: 'center' } as Table.CellOptions; 
+  const row_trasformed = row.map((cell, index) => {
+    
+    return { content: cell, hAlign: 'center' } as Table.CellOptions;
   })
   table_bedding_sets.push(row_trasformed);
 });
