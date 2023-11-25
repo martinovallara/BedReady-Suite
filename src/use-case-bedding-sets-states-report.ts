@@ -114,22 +114,20 @@ export default class UseCaseBeddingSetsStatesReport {
         return checkIn.toMillis() === current_date.toMillis();
     };
 
-    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, delivery?: Delivery, pickup?: Pickup): Event[]  {
+    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, delivery?: Delivery, pickup?: Pickup): Event[] {
         const events: Event[] = [];
         if (checkInBooking) {
-            events.push('Check In');
+            events.push({ name: 'Check In', sets: checkInBooking.beddingSets });
         }
         if (checkOutBooking) {
-            events.push('Check Out');
+            events.push({ name: 'Check Out', sets: checkOutBooking.beddingSets });
         }
         if (delivery) {
-            events.push('Delivery');
+            events.push({ name: 'Delivery', sets: delivery.sets });
         }
         if (pickup) {
-            events.push('Pickup');
+            events.push({ name: 'Pickup', sets: pickup.sets });
         }
         return events;
-
     }
-
 }

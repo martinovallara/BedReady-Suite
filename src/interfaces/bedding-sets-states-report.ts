@@ -2,8 +2,12 @@ export type BeddingSetsStatesReport = {
   days: BeddingSetsStateOnDate[];
 };
 
-// definisci tipo evento stringa che possiede solo i seguenti valori: 'checkIn', 'checkOut', 'delivery', 'pickup'
-export type Event = 'Check In' | 'Check Out' | 'Delivery' | 'Pickup';
+
+export type EventName = 'Check In' | 'Check Out' | 'Delivery' | 'Pickup';
+export type Event = {
+  name: EventName;
+  sets: number;
+};
 
 export type BeddingSetsStateOnDate = BeddingSetsState & {
   date: Date;

@@ -39,7 +39,9 @@ const report = beddingSetsStatesReport.report(date_zero, 20);
 const report_table = report.days.map((day) => {
   return [
     DateTime.fromJSDate(day.date).setLocale('it').toFormat('ccc dd LLL yyyy'),
-    day.events.toString(),
+    day.events.map((event) => {
+      return `${event.name} (${event.sets})`;
+    }).toString(),
     chalk['greenBright']('■'.repeat(day.cleaned)),
     chalk['yellow']('■'.repeat(day.in_use)),
     chalk['redBright']('■'.repeat(day.dirty)),
