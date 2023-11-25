@@ -1,9 +1,7 @@
 import { DateTime } from 'luxon';
-import { Booking } from './interfaces/bedding-sets-states-report';
-import UseCaseBeddingSetsStatesReport from './use-case-bedding-sets-states-report';
+import UseCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report';
 
 import Table from 'cli-table3';
-import CliTable3 from 'cli-table3';
 
 const date_zero = new Date(0);
 const day = 24 * 3600 * 1000;
@@ -26,10 +24,11 @@ const bookings: Booking[] = [
 
 beddingSetsStatesReport.bookingConfirmed(bookings[0]);
 beddingSetsStatesReport.bookingConfirmed(bookings[1]);
+beddingSetsStatesReport.onDeliveryToLaundry({ date: new Date(4 * day), sets: 2, cleaningTime: 5 });
 
 // instantiate
 const table_bedding_sets = new Table({
-  head: ['data', 'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia'],
+  head: ['data', 'eventi' ,'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia'],
   style: { 'padding-left': 1, 'padding-right': 1, head: [], border: [] } // Add style property
 });
 
@@ -38,6 +37,7 @@ const report = beddingSetsStatesReport.report(date_zero, 20);
 const report_table = report.days.map((day) => {
   return [
     DateTime.fromJSDate(day.date).setLocale('it').toFormat('ccc dd LLL yyyy'),
+    day.events.toString(),
     day.cleaned.toString(),
     day.in_use.toString(),
     day.dirty.toString(),
@@ -49,7 +49,7 @@ const report_table = report.days.map((day) => {
 // table is an Array, so you can `push`, `unshift`, `splice` and friends
 report_table.forEach((row) => {
   const row_trasformed = row.map((cell) => {
-    return  { content: cell, hAlign: 'center' } as CliTable3.CellOptions; 
+    return  { content: cell, hAlign: 'center' } as Table.CellOptions; 
   })
   table_bedding_sets.push(row_trasformed);
 });
