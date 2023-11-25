@@ -1,5 +1,5 @@
 import { DateTime } from "luxon"
-import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, Event } from "./interfaces/bedding-sets-states-report"
+import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, Event, EventName } from "./interfaces/bedding-sets-states-report"
 import BeddingSets from "./domain/bedding-sets-state";
 
 export type Booking = {
@@ -115,19 +115,15 @@ export default class UseCaseBeddingSetsStatesReport {
     };
 
     getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, delivery?: Delivery, pickup?: Pickup): Event[] {
-        const events: Event[] = [];
-        if (checkInBooking) {
-            events.push({ name: 'Check In', sets: checkInBooking.beddingSets });
-        }
-        if (checkOutBooking) {
-            events.push({ name: 'Check Out', sets: checkOutBooking.beddingSets });
-        }
-        if (delivery) {
-            events.push({ name: 'Delivery', sets: delivery.sets });
-        }
-        if (pickup) {
-            events.push({ name: 'Pickup', sets: pickup.sets });
-        }
-        return events;
+        const eventMappings: { condition: Booking | Delivery | Pickup | undefined , name: EventName, sets: number | undefined }[] = [
+            { condition: checkInBooking, name: 'Check In' as EventName, sets: checkInBooking?.beddingSets },
+            { condition: checkOutBooking, name: 'Check Out' as EventName, sets: checkOutBooking?.beddingSets },
+            { condition: delivery, name: 'Delivery' as EventName, sets: delivery?.sets },
+            { condition: pickup, name: 'Pickup' as EventName, sets: pickup?.sets }
+        ];
+
+        return eventMappings
+            .filter(mapping => mapping.condition)
+            .map(({ name, sets }) => ({ name, sets: sets || 0 }));
     }
 }
