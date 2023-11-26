@@ -21,11 +21,29 @@ const bookings: Booking[] = [
     checkInDate: new Date(3 * day),
     checkOutDate: new Date(5 * day),
     beddingSets: 2
+  },
+  {
+    checkInDate: new Date(5 * day),
+    checkOutDate: new Date(7 * day),
+    beddingSets: 2
+  },
+  {
+    checkInDate: new Date(7 * day),
+    checkOutDate: new Date(9 * day),
+    beddingSets: 2
+  },
+  {
+    checkInDate: new Date(9 * day),
+    checkOutDate: new Date(11 * day),
+    beddingSets: 2
   }
 ]
 
 beddingSetsStatesReport.bookingConfirmed(bookings[0]);
 beddingSetsStatesReport.bookingConfirmed(bookings[1]);
+beddingSetsStatesReport.bookingConfirmed(bookings[2]);
+beddingSetsStatesReport.bookingConfirmed(bookings[3]);
+beddingSetsStatesReport.bookingConfirmed(bookings[4]);
 beddingSetsStatesReport.onDeliveryToLaundry({ date: new Date(4 * day), sets: 2, cleaningTime: 5 });
 
 // instantiate
@@ -42,7 +60,7 @@ const report_table = report.days.map((day) => {
     day.events.map((event) => {
       return `${event.name} (${event.sets})`;
     }).toString(),
-    chalk['greenBright']('■'.repeat(day.cleaned)),
+    day.cleaned >= 0 ? chalk['greenBright']('■'.repeat(day.cleaned)) : chalk['redBright']('X'.repeat(-day.cleaned)),
     chalk['yellow']('■'.repeat(day.in_use)),
     chalk['redBright']('■'.repeat(day.dirty)),
     chalk['magenta']('■'.repeat(day.cleaning)),
