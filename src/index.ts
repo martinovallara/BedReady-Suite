@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
-
+import select, { Separator } from '@inquirer/select';
 
 import Table from 'cli-table3';
-import UseCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report';
+import UseCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report.js';
 import chalk from 'chalk';
 
 const date_zero = new Date(0);
@@ -79,3 +79,32 @@ report_table.forEach((row) => {
 });
 
 console.log(table_bedding_sets.toString());
+
+
+
+const answer = await select({
+  message: 'Select a package manager',
+  choices: [
+    {
+      name: 'npm',
+      value: 'npm',
+      description: 'npm is the most popular package manager',
+    },
+    {
+      name: 'yarn',
+      value: 'yarn',
+      description: 'yarn is an awesome package manager',
+    },
+    new Separator(),
+    {
+      name: 'jspm',
+      value: 'jspm',
+      disabled: true,
+    },
+    {
+      name: 'pnpm',
+      value: 'pnpm',
+      disabled: '(pnpm is not available)',
+    },
+  ],
+});

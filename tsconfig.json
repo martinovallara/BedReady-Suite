@@ -1,12 +1,27 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "baseUrl": "./src",
+  "paths": {
+    "@/*": [
+      "src/*"
+    ]
+  },
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "NodeNext",
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "nodenext"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "ts-node": {
+    "esm": true, // «———— enabling ESM for ts-node
+  },
 }

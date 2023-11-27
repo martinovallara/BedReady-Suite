@@ -1,6 +1,8 @@
 import { DateTime } from "luxon"
-import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, Event, EventName } from "./interfaces/bedding-sets-states-report"
-import BeddingSets from "./domain/bedding-sets-state";
+
+import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
+import BeddingSets from "./domain/bedding-sets-state.js";
+
 
 export type Booking = {
     checkInDate: Date;
@@ -124,6 +126,6 @@ export default class UseCaseBeddingSetsStatesReport {
 
         return eventMappings
             .filter(mapping => mapping.condition)
-            .map(({ name, sets }) => ({ name, sets: sets || 0 }));
+            .map(({ name, sets }) => ({ name, sets: sets ?? 0 }));
     }
 }

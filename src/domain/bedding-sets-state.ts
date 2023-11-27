@@ -1,4 +1,7 @@
-import { BeddingSetsState } from "../interfaces/bedding-sets-states-report";
+import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
+
+
+
 
 export default class BeddingSets implements BeddingSetsState {
 

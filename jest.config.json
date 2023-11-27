@@ -1,10 +1,30 @@
 {
   "verbose": true,
-  "moduleFileExtensions": ["js", "json", "jsx", "ts", "tsx", "node"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "jsx",
+    "ts",
+    "tsx",
+    "node"
+  ],
   "transform": {
-    "^.+\\.(ts|tsx)$": "ts-jest"
+    "^.+\\.(ts|tsx)$": [
+      "ts-jest",
+      {
+        "useESM": true
+      }
+    ]
   },
   "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-  "modulePaths": ["<rootDir>/src"],
-  "testEnvironment": "node"
+  "modulePaths": [
+    "<rootDir>/src"
+  ],
+  "testEnvironment": "node",
+  "extensionsToTreatAsEsm": [
+    ".ts"
+  ],
+  "moduleNameMapper": {
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  }
 }
