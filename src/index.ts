@@ -95,15 +95,7 @@ const answer = await select({
       value: 'booking',
       description: 'registra la prenotazione, con data check-in, set matrimoniali, e data di check-out.',
     },
-    {
-      name: 'jspm',
-      value: 'jspm',
-      disabled: true,
-    },
-    {
-      name: 'pnpm',
-      value: 'pnpm',
-      disabled: '(pnpm is not available)',
-    },
-  ],
+  ]
 });
+
+console.log(answer);
