@@ -1,21 +1,23 @@
 import { describe, expect } from '@jest/globals';
 import useCaseBeddingSetsStatesReport, { UseCaseBeddingSetsStatesReport, Booking } from '../src/use-case-bedding-sets-states-report';
-import { BeddingSetsStatesReport } from '../src/interfaces/bedding-sets-states-report';
+import { BeddingSetsState, BeddingSetsStatesReport } from '../src/interfaces/bedding-sets-states-report';
+import RepositoryDateZero from '../src/infrastructure/repositories/repository-date-zero.js';
 
-const date_zero = new Date(0);
+
+const date_zero = RepositoryDateZero.setDateZero(new Date(0));
 const day = 24 * 3600 * 1000;
 const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 
 beforeEach(() => {
-  beddingSetsStatesReport = useCaseBeddingSetsStatesReport();
+  beddingSetsStatesReport = useCaseBeddingSetsStatesReport().renew();
   beddingSetsStatesReport.addBeddingSets(amountOfBeddingSet);
 })
 
 describe('beddingSetstatesReport', () => {
   it('should return all bedding sets cleaned at begin of process', () => {
 
-    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 5);
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
     expect(report.days.length).toEqual(6);
 
     expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: 9, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
@@ -40,7 +42,7 @@ describe('beddingSetstatesReport', () => {
 
       beddingSetsStatesReport.bookingConfirmed(booking);
 
-      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 5);
+      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
       expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
       expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: cleanedExpected, in_use: sets, dirty: 0, cleaning: 0, in_laundery: 0 });
@@ -63,7 +65,7 @@ describe('beddingSetstatesReport', () => {
 
       beddingSetsStatesReport.bookingConfirmed(booking);
 
-      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 5);
+      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
 
       expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
@@ -92,7 +94,7 @@ describe('beddingSetstatesReport', () => {
       beddingSetsStatesReport.bookingConfirmed(bookings[0]);
       beddingSetsStatesReport.bookingConfirmed(bookings[1]);
 
-      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 5);
+      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
       expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
       expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 7, in_use: 2, dirty: 0, cleaning: 0, in_laundery: 0 });
@@ -116,7 +118,7 @@ describe('beddingSetstatesReport', () => {
 
       beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
 
-      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 10);
+      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
 
       expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
       expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 8, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
@@ -126,29 +128,49 @@ describe('beddingSetstatesReport', () => {
 
     });
 
-    it('show events', () => {
 
-      const bookings: Booking[] = [
-        {
-          checkInDate: new Date(1 * day),
-          checkOutDate: new Date(2 * day),
-          beddingSets: 1
-        }
-      ]
-
-      beddingSetsStatesReport.bookingConfirmed(bookings[0]);
-
-      beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-      beddingSetsStatesReport.onPickupLaundry({ date: new Date(4 * day), sets: 1 });
-
-      const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 5);
-
-      expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), events: [{ name: 'Check In', sets: 1 }] });
-      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'InCleaning', sets: 1 }] });
-      expect(report.days[4]).toMatchObject({ date: new Date(4 * day), events: [{ name: 'Pickup', sets: 1 }] });
-    });
   });
+
+  it('show events', () => {
+
+    const bookings: Booking[] = [
+      {
+        checkInDate: new Date(1 * day),
+        checkOutDate: new Date(2 * day),
+        beddingSets: 1
+      }
+    ]
+
+    beddingSetsStatesReport.bookingConfirmed(bookings[0]);
+
+    beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
+    beddingSetsStatesReport.onPickupLaundry({ date: new Date(4 * day), sets: 1 });
+
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
+
+    expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
+    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), events: [{ name: 'Check In', sets: 1 }] });
+    expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'InCleaning', sets: 1 }] });
+    expect(report.days[4]).toMatchObject({ date: new Date(4 * day), events: [{ name: 'Pickup', sets: 1 }] });
+  });
+
+  it('initial state', () => {
+    const InitialState: BeddingSetsState = {
+      cleaned: 10,
+      in_use: 9,
+      dirty: 8,
+      cleaning: 7,
+      in_laundery: 6
+    } 
+    
+    beddingSetsStatesReport.InitialState(InitialState);
+
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
+
+    expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: 10, in_use: 9, dirty: 8, cleaning: 7, in_laundery: 6 });
+
+
+  })
 })
 
 

@@ -1,15 +1,17 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
 
-
-
-
 export default class BeddingSets implements BeddingSetsState {
+
 
     cleaned: number = 0;
     in_use: number = 0;
     dirty: number = 0;
     cleaning: number = 0;
     in_laundery: number = 0;
+
+    setup(initialState: BeddingSetsState) {
+        Object.assign(this, initialState);
+    }
 
     onCheckIn: (beddingSets: number) => void = (beddingSets: number) => {
         this.cleaned -= beddingSets;

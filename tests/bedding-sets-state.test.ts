@@ -1,6 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 
 import BeddingSets from '../src/domain/bedding-sets-state';
+import { BeddingSetsState, BeddingSetsStateOnDate } from '../src/interfaces/bedding-sets-states-report';
 
 describe('BeddingSets', () => {
 
@@ -68,5 +69,22 @@ describe('BeddingSets', () => {
         expect(beddingSets.dirty).toBe(0);
         expect(beddingSets.cleaning).toBe(0);
         expect(beddingSets.in_laundery).toBe(-1);
+    })
+
+    test('setup bedding sets states', () => {
+        const beddingSets = new BeddingSets();
+        const dataSetup: BeddingSetsState= {
+            cleaned: 1,
+            in_use: 2,
+            dirty: 3,
+            cleaning: 4,
+            in_laundery: 5
+        }
+        beddingSets.setup(dataSetup);        
+        expect(beddingSets.cleaned).toBe(1);
+        expect(beddingSets.in_use).toBe(2);
+        expect(beddingSets.dirty).toBe(3);
+        expect(beddingSets.cleaning).toBe(4);
+        expect(beddingSets.in_laundery).toBe(5);
     })
 })

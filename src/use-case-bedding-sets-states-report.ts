@@ -2,6 +2,7 @@ import { DateTime } from "luxon"
 
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSets from "./domain/bedding-sets-state.js";
+import RepositoryDateZero from "./infrastructure/repositories/repository-date-zero.js";
 
 
 export type Booking = {
@@ -23,25 +24,39 @@ type Pickup = {
 
 export class UseCaseBeddingSetsStatesReport {
 
+    private static instance: UseCaseBeddingSetsStatesReport | null;
     beddingSets: BeddingSets;
 
     bookingsConfirmed: Booking[];
     deliveries: InCleaning[];
     pickups: Pickup[];
 
-    constructor() {
+    private constructor() {
         this.beddingSets = new BeddingSets();
         this.bookingsConfirmed = [];
         this.deliveries = [];
         this.pickups = [];
     }
 
-    addBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
-        this.beddingSets.addBeddingSets(amountOfBeddingSets);
-    };
+    public static getInstance(): UseCaseBeddingSetsStatesReport {
+        if (!UseCaseBeddingSetsStatesReport.instance) {
+            UseCaseBeddingSetsStatesReport.instance = new UseCaseBeddingSetsStatesReport();
+        }
+        return UseCaseBeddingSetsStatesReport.instance;
+    }
 
-    report: (date_zero: Date, forecastDays: number) => BeddingSetsStatesReport = (date_zero: Date, forecastDays: number) => {
-        const date_time_zero = DateTime.fromJSDate(date_zero);
+    renew(): UseCaseBeddingSetsStatesReport {
+        UseCaseBeddingSetsStatesReport.instance = null;
+        return UseCaseBeddingSetsStatesReport.getInstance();
+    }
+
+
+    InitialState(InitialState: BeddingSetsState) {
+        this.beddingSets.setup(InitialState);
+    }
+
+    report(forecastDays: number): BeddingSetsStatesReport {
+        const date_time_zero = DateTime.fromJSDate(RepositoryDateZero.getDateZero());
 
         const report: BeddingSetsStatesReport = {
             days: Array.from({ length: forecastDays + 1 }, (_, index) => {
@@ -49,6 +64,10 @@ export class UseCaseBeddingSetsStatesReport {
             })
         }
         return report;
+    };
+
+    addBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
+        this.beddingSets.addBeddingSets(amountOfBeddingSets);
     };
 
     bookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
@@ -117,7 +136,7 @@ export class UseCaseBeddingSetsStatesReport {
     };
 
     getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning, pickup?: Pickup): Event[] {
-        const eventMappings: { condition: Booking | InCleaning | Pickup | undefined , name: EventName, sets: number | undefined }[] = [
+        const eventMappings: { condition: Booking | InCleaning | Pickup | undefined, name: EventName, sets: number | undefined }[] = [
             { condition: checkInBooking, name: 'Check In' as EventName, sets: checkInBooking?.beddingSets },
             { condition: checkOutBooking, name: 'Check Out' as EventName, sets: checkOutBooking?.beddingSets },
             { condition: InCleaning, name: 'InCleaning' as EventName, sets: InCleaning?.sets },
@@ -131,5 +150,5 @@ export class UseCaseBeddingSetsStatesReport {
 }
 
 export default function useCaseBaddingSetStateReport() {
-    return new UseCaseBeddingSetsStatesReport();
+    return UseCaseBeddingSetsStatesReport.getInstance();
 } 
