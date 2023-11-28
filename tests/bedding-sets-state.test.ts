@@ -39,9 +39,9 @@ describe('BeddingSets', () => {
         expect(beddingSets.in_laundery).toBe(0);
     })
 
-    test('onDeliveryToLaundry remove sets from dirty and add to claaning', () => {
+    test('OnBrougthForCleaning remove sets from dirty and add to claaning', () => {
         const beddingSets = new BeddingSets();
-        beddingSets.onDeliveryToLaundry(1);
+        beddingSets.OnBrougthForCleaning(1);
         expect(beddingSets.cleaned).toBe(0);
         expect(beddingSets.in_use).toBe(0);
         expect(beddingSets.dirty).toBe(-1);

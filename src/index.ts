@@ -44,7 +44,7 @@ beddingSetsStatesReport.bookingConfirmed(bookings[1]);
 beddingSetsStatesReport.bookingConfirmed(bookings[2]);
 beddingSetsStatesReport.bookingConfirmed(bookings[3]);
 beddingSetsStatesReport.bookingConfirmed(bookings[4]);
-beddingSetsStatesReport.onDeliveryToLaundry({ date: new Date(4 * day), sets: 2, cleaningTime: 5 });
+beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(4 * day), sets: 2, cleaningTime: 5 });
 
 // instantiate
 const table_bedding_sets = new Table({
@@ -83,19 +83,18 @@ console.log(table_bedding_sets.toString());
 
 
 const answer = await select({
-  message: 'Select a package manager',
+  message: 'Seleziona il comando da eseguire',
   choices: [
     {
-      name: 'npm',
-      value: 'npm',
-      description: 'npm is the most popular package manager',
+      name: 'setup',
+      value: 'InitBeddingSets',
+      description: 'Imposta il numero di sets matrimoniali in ogni stato (pulite, in uso, sporche, in pulizia, in lavanderia) ',
     },
     {
-      name: 'yarn',
-      value: 'yarn',
-      description: 'yarn is an awesome package manager',
+      name: 'booking',
+      value: 'booking',
+      description: 'registra la prenotazione, con data check-in, set matrimoniali, e data di check-out.',
     },
-    new Separator(),
     {
       name: 'jspm',
       value: 'jspm',

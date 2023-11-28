@@ -25,7 +25,7 @@ export default class BeddingSets implements BeddingSetsState {
         this.cleaned += amountOfBeddingSets;
     }
 
-    onDeliveryToLaundry(sets: number) {
+    OnBrougthForCleaning(sets: number) {
         this.cleaning += sets;
         this.dirty -= sets;
     }

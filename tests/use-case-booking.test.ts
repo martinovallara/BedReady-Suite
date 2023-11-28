@@ -102,7 +102,7 @@ describe('beddingSetstatesReport', () => {
     });
 
 
-    it('when sets is to delivery to laundry only after 7 days the sets become ready to pickup', () => {
+    it('when sets is to brougth for cleaning to laundry only after 7 days the sets become ready to pickup', () => {
 
       const bookings: Booking[] = [
         {
@@ -114,7 +114,7 @@ describe('beddingSetstatesReport', () => {
 
       beddingSetsStatesReport.bookingConfirmed(bookings[0]);
 
-      beddingSetsStatesReport.onDeliveryToLaundry({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
+      beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 10);
 
@@ -138,14 +138,14 @@ describe('beddingSetstatesReport', () => {
 
       beddingSetsStatesReport.bookingConfirmed(bookings[0]);
 
-      beddingSetsStatesReport.onDeliveryToLaundry({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
+      beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
       beddingSetsStatesReport.onPickupLaundry({ date: new Date(4 * day), sets: 1 });
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(date_zero, 5);
 
       expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
       expect(report.days[1]).toMatchObject({ date: new Date(1 * day), events: [{ name: 'Check In', sets: 1 }] });
-      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'Delivery', sets: 1 }] });
+      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'BrougthForCleaning', sets: 1 }] });
       expect(report.days[4]).toMatchObject({ date: new Date(4 * day), events: [{ name: 'Pickup', sets: 1 }] });
     });
   });

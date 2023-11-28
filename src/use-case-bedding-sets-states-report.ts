@@ -10,7 +10,7 @@ export type Booking = {
     beddingSets: number;
 };
 
-type Delivery = {
+type BrougthForCleaning = {
     date: Date;
     sets: number;
     cleaningTime: number;
@@ -26,7 +26,7 @@ export default class UseCaseBeddingSetsStatesReport {
     beddingSets: BeddingSets;
 
     bookingsConfirmed: Booking[];
-    deliveries: Delivery[];
+    deliveries: BrougthForCleaning[];
     pickups: Pickup[];
 
     constructor() {
@@ -54,8 +54,8 @@ export default class UseCaseBeddingSetsStatesReport {
     bookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
         this.bookingsConfirmed.push(booking);
     };
-    onDeliveryToLaundry(Delivery: Delivery) {
-        this.deliveries.push(Delivery);
+    OnBrougthForCleaning(BrougthForCleaning: BrougthForCleaning) {
+        this.deliveries.push(BrougthForCleaning);
     }
 
     onPickupLaundry(pickup: Pickup) {
@@ -68,8 +68,8 @@ export default class UseCaseBeddingSetsStatesReport {
         const checkInBooking = this.bookingsConfirmed.find(booking => this.onCheckIn(booking, current_date));
         const checkOutBooking = this.bookingsConfirmed.find(booking => this.onCheckOut(booking, current_date));
 
-        const delivery = this.deliveries.find(delivery => DateTime.fromJSDate(delivery.date).toMillis() === current_date.toMillis());
-        const onFinishCleaning = this.deliveries.find(delivery => DateTime.fromJSDate(delivery.date).plus({ days: delivery.cleaningTime + 1 }).toMillis() === current_date.toMillis());
+        const BrougthForCleaning = this.deliveries.find(BrougthForCleaning => DateTime.fromJSDate(BrougthForCleaning.date).toMillis() === current_date.toMillis());
+        const onFinishCleaning = this.deliveries.find(BrougthForCleaning => DateTime.fromJSDate(BrougthForCleaning.date).plus({ days: BrougthForCleaning.cleaningTime + 1 }).toMillis() === current_date.toMillis());
 
         const pickup = this.pickups.find(pickup => DateTime.fromJSDate(pickup.date).toMillis() === current_date.toMillis());
 
@@ -81,8 +81,8 @@ export default class UseCaseBeddingSetsStatesReport {
             this.beddingSets.onCheckOut(checkOutBooking.beddingSets);
         }
 
-        if (delivery) {
-            this.beddingSets.onDeliveryToLaundry(delivery.sets);
+        if (BrougthForCleaning) {
+            this.beddingSets.OnBrougthForCleaning(BrougthForCleaning.sets);
         }
 
         if (onFinishCleaning) {
@@ -97,7 +97,7 @@ export default class UseCaseBeddingSetsStatesReport {
 
         return {
             date: current_date.toJSDate(),
-            events: this.getEvents(checkInBooking, checkOutBooking, delivery, pickup),
+            events: this.getEvents(checkInBooking, checkOutBooking, BrougthForCleaning, pickup),
             cleaned,
             in_use,
             dirty,
@@ -116,11 +116,11 @@ export default class UseCaseBeddingSetsStatesReport {
         return checkIn.toMillis() === current_date.toMillis();
     };
 
-    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, delivery?: Delivery, pickup?: Pickup): Event[] {
-        const eventMappings: { condition: Booking | Delivery | Pickup | undefined , name: EventName, sets: number | undefined }[] = [
+    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, BrougthForCleaning?: BrougthForCleaning, pickup?: Pickup): Event[] {
+        const eventMappings: { condition: Booking | BrougthForCleaning | Pickup | undefined , name: EventName, sets: number | undefined }[] = [
             { condition: checkInBooking, name: 'Check In' as EventName, sets: checkInBooking?.beddingSets },
             { condition: checkOutBooking, name: 'Check Out' as EventName, sets: checkOutBooking?.beddingSets },
-            { condition: delivery, name: 'Delivery' as EventName, sets: delivery?.sets },
+            { condition: BrougthForCleaning, name: 'BrougthForCleaning' as EventName, sets: BrougthForCleaning?.sets },
             { condition: pickup, name: 'Pickup' as EventName, sets: pickup?.sets }
         ];
 

@@ -3,7 +3,7 @@ export type BeddingSetsStatesReport = {
 };
 
 
-export type EventName = 'Check In' | 'Check Out' | 'Delivery' | 'Pickup';
+export type EventName = 'Check In' | 'Check Out' | 'BrougthForCleaning' | 'Pickup';
 export type Event = {
   name: EventName;
   sets: number;
