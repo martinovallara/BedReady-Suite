@@ -21,7 +21,7 @@ type Pickup = {
     sets: number;
 };
 
-export default class UseCaseBeddingSetsStatesReport {
+export class UseCaseBeddingSetsStatesReport {
 
     beddingSets: BeddingSets;
 
@@ -129,3 +129,7 @@ export default class UseCaseBeddingSetsStatesReport {
             .map(({ name, sets }) => ({ name, sets: sets ?? 0 }));
     }
 }
+
+export default function useCaseBaddingSetStateReport() {
+    return new UseCaseBeddingSetsStatesReport();
+} 

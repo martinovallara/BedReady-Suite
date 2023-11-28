@@ -1,5 +1,5 @@
 import { describe, expect } from '@jest/globals';
-import UseCaseBeddingSetsStatesReport, { Booking } from '../src/use-case-bedding-sets-states-report';
+import useCaseBeddingSetsStatesReport, { UseCaseBeddingSetsStatesReport, Booking } from '../src/use-case-bedding-sets-states-report';
 import { BeddingSetsStatesReport } from '../src/interfaces/bedding-sets-states-report';
 
 const date_zero = new Date(0);
@@ -8,7 +8,7 @@ const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 
 beforeEach(() => {
-  beddingSetsStatesReport = new UseCaseBeddingSetsStatesReport();
+  beddingSetsStatesReport = useCaseBeddingSetsStatesReport();
   beddingSetsStatesReport.addBeddingSets(amountOfBeddingSet);
 })
 

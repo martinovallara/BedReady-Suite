@@ -1,14 +1,17 @@
 import { DateTime } from 'luxon';
-import select, { Separator } from '@inquirer/select';
+import { Separator } from '@inquirer/select';
 
 import Table from 'cli-table3';
-import UseCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report.js';
+import useCaseBeddingSetsStatesReport, { Booking } from './use-case-bedding-sets-states-report.js';
 import chalk from 'chalk';
 
+import { promptLoop } from './promptLoop.js';
+
+/*
 const date_zero = new Date(0);
 const day = 24 * 3600 * 1000;
 const amountOfBeddingSet = 9;
-let beddingSetsStatesReport = new UseCaseBeddingSetsStatesReport();
+let beddingSetsStatesReport = useCaseBeddingSetsStatesReport();
 beddingSetsStatesReport.addBeddingSets(amountOfBeddingSet);
 
 const bookings: Booking[] = [
@@ -80,22 +83,7 @@ report_table.forEach((row) => {
 
 console.log(table_bedding_sets.toString());
 
+*/
 
+await promptLoop();
 
-const answer = await select({
-  message: 'Seleziona il comando da eseguire',
-  choices: [
-    {
-      name: 'setup',
-      value: 'InitBeddingSets',
-      description: 'Imposta il numero di sets matrimoniali in ogni stato (pulite, in uso, sporche, in pulizia, in lavanderia) ',
-    },
-    {
-      name: 'booking',
-      value: 'booking',
-      description: 'registra la prenotazione, con data check-in, set matrimoniali, e data di check-out.',
-    },
-  ]
-});
-
-console.log(answer);
