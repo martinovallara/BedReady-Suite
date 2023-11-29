@@ -11,7 +11,7 @@ export default async function useCaseInitBeddingSets() {
 
   // crea sequenza di input per creare un BeddingSetsState
   const dateZero: string = await input({
-    message: "data a cui corrisponde lo stato iniziale del sets matrimoniali",
+    message: "data a cui corrisponde lo stato iniziale dei sets matrimoniali",
     default: DateTime.now().toFormat('dd/LL/yy'),
     validate: (input) => {
       const date = DateTime.fromFormat(input, 'dd/LL/yy');

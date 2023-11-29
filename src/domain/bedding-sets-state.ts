@@ -1,7 +1,6 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
 
-export default class BeddingSets implements BeddingSetsState {
-
+export default class BeddingSetsReadModel implements BeddingSetsState {
 
     cleaned: number = 0;
     in_use: number = 0;

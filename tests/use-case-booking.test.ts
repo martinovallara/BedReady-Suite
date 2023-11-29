@@ -155,6 +155,7 @@ describe('beddingSetstatesReport', () => {
   });
 
   it('initial state', () => {
+    beddingSetsStatesReport.addBeddingSets(-amountOfBeddingSet); // reset the initial amount of set
     const InitialState: BeddingSetsState = {
       cleaned: 10,
       in_use: 9,
@@ -162,14 +163,30 @@ describe('beddingSetstatesReport', () => {
       cleaning: 7,
       in_laundery: 6
     } 
-    
+
+
+
     beddingSetsStatesReport.InitialState(InitialState);
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
 
     expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: 10, in_use: 9, dirty: 8, cleaning: 7, in_laundery: 6 });
+  })
 
+  it('report rebuild when called more than once', () => {
 
+    const bookings: Booking[] = [
+      {
+        checkInDate: new Date(1 * day),
+        checkOutDate: new Date(2 * day),
+        beddingSets: 1
+      }
+    ]
+    beddingSetsStatesReport.bookingConfirmed(bookings[0]);
+    beddingSetsStatesReport.report(2);
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(2);
+
+    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet-1, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
   })
 })
 

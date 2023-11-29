@@ -30,13 +30,9 @@ export async function promptLoop() {
     });
   }
 
- 
-
   let answer = await askCommand();
 
   while (answer !== 'exit') {
-
-    console.log(answer);
 
     if (answer === 'initBeddingSets') {
       await useCaseInitBeddingSets();
@@ -47,7 +43,7 @@ export async function promptLoop() {
     };
 
     answer = await askCommand();
-  } 
+  }
 
 }
 
