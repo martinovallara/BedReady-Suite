@@ -6,6 +6,7 @@ import useCaseBaddingSetStateReport from './use-case-bedding-sets-states-report.
 import showReport from './app/console/presenter/table-report.js';
 import useCaseInCleaningInput from './app/console/use-case-in-cleaning/in-cleaning-handler.js';
 import useCasePickupAfterCleaningInput from './app/console/use-case-pickup/pickup-after-cleaning-handler.js';
+import EventsRepository from './infrastructure/repositories/repository-events.js';
 
 export async function promptLoop() {
 
@@ -63,7 +64,7 @@ export async function promptLoop() {
       await useCasePickupAfterCleaningInput();
     }
 
-    const beddingSetsReport = useCaseBaddingSetStateReport();
+    const beddingSetsReport = useCaseBaddingSetStateReport(EventsRepository.getInstance());
     const report = beddingSetsReport.report(20);
     showReport(report);
     

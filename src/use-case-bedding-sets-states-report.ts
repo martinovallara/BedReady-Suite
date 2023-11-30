@@ -3,6 +3,7 @@ import { DateTime } from "luxon"
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
 import RepositoryDateZero from "./infrastructure/repositories/repository-date-zero.js";
+import EventsRepository from "./infrastructure/repositories/repository-events.js";
 
 
 export type Booking = {
@@ -31,29 +32,29 @@ export class UseCaseBeddingSetsStatesReport {
 
     private static instance: UseCaseBeddingSetsStatesReport | null;
 
-    additionBeddingSets: AdditionBeddingSets[]
     bookingsConfirmed: Booking[];
     cleaningDepots: InCleaning[];
     pickups: Pickup[];
     initialState: BeddingSetsState | undefined
+    eventsRepository: EventsRepository;
 
-    private constructor() {
-        this.additionBeddingSets = [];
+    private constructor(eventsRepository: EventsRepository ) {
         this.bookingsConfirmed = [];
         this.cleaningDepots = [];
         this.pickups = [];
+        this.eventsRepository = eventsRepository;
     }
 
-    public static getInstance(): UseCaseBeddingSetsStatesReport {
+    public static getInstance(eventsRepository: EventsRepository): UseCaseBeddingSetsStatesReport {
         if (!UseCaseBeddingSetsStatesReport.instance) {
-            UseCaseBeddingSetsStatesReport.instance = new UseCaseBeddingSetsStatesReport();
+            UseCaseBeddingSetsStatesReport.instance = new UseCaseBeddingSetsStatesReport(eventsRepository);
         }
         return UseCaseBeddingSetsStatesReport.instance;
     }
 
-    renew(): UseCaseBeddingSetsStatesReport {
+    renew(eventsRepository: EventsRepository): UseCaseBeddingSetsStatesReport {
         UseCaseBeddingSetsStatesReport.instance = null;
-        return UseCaseBeddingSetsStatesReport.getInstance();
+        return UseCaseBeddingSetsStatesReport.getInstance(eventsRepository);
     }
 
 
@@ -74,13 +75,6 @@ export class UseCaseBeddingSetsStatesReport {
         return report;
     };
 
-    storeAddBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
-        this.additionBeddingSets.push({
-            date: RepositoryDateZero.getDateZero(),
-            sets: amountOfBeddingSets
-        });
-    };
-
     storeBookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
         this.bookingsConfirmed.push(booking);
     };
@@ -95,7 +89,9 @@ export class UseCaseBeddingSetsStatesReport {
     beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateTimeZero: DateTime, days: number): BeddingSetsStateOnDate => {
         const current_date = dateTimeZero.plus({ days: days });
 
-        const onAddBeddingSets = this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
+        //const onAddBeddingSets = this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
+        // assegna onAddBeddingSets chiamando EventsRepository
+        const onAddBeddingSets = this.eventsRepository.findEvents('Add Bedding Set', current_date); 
 
         const checkInBooking = this.bookingsConfirmed.find(booking => this.onCheckIn(booking, current_date));
         const checkOutBooking = this.bookingsConfirmed.find(booking => this.onCheckOut(booking, current_date));
@@ -154,10 +150,7 @@ export class UseCaseBeddingSetsStatesReport {
         return checkIn.toMillis() === current_date.toMillis();
     };
 
-    private onAddBeddingSets(addition: AdditionBeddingSets, current_date: DateTime): unknown {
-        const addingBeddingSetDate = DateTime.fromJSDate(addition.date);
-        return addingBeddingSetDate.toMillis() === current_date.toMillis();
-    }
+
 
     getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning, pickup?: Pickup): Event[] {
         const eventMappings: { condition: Booking | InCleaning | Pickup | undefined, name: EventName, sets: number | undefined }[] = [
@@ -173,6 +166,6 @@ export class UseCaseBeddingSetsStatesReport {
     }
 }
 
-export default function useCaseBaddingSetStateReport() {
-    return UseCaseBeddingSetsStatesReport.getInstance();
+export default function useCaseBaddingSetStateReport(eventsRepository: EventsRepository) {
+    return UseCaseBeddingSetsStatesReport.getInstance(eventsRepository);
 } 

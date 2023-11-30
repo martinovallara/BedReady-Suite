@@ -2,11 +2,12 @@
 
 import { DateTime } from 'luxon';
 import { input } from '@inquirer/prompts';
-import useCaseBaddingSetStateReport, { Pickup } from '../../../use-case-bedding-sets-states-report.js';
+import { Pickup } from '../../../use-case-bedding-sets-states-report.js';
 import parseDate from '../../../utils/datetime-parser.js';
+import EventsRepostiory from '../../../infrastructure/repositories/repository-events.js';
 
 export default async function useCasePickupAfterCleaningInput() {
-    const beddingSetsReport = useCaseBaddingSetStateReport();
+    const repositoryEvents = EventsRepostiory.getInstance();
 
     const pickupAfterCleaningDate: string = await input({
         message: "data a cui corrisponde il ritiro dei sets matrimoniali dopo la pulizia",
@@ -33,6 +34,6 @@ export default async function useCasePickupAfterCleaningInput() {
         sets: parseInt(pickupAfterCleaning),
     }
 
-    beddingSetsReport.storeOnPickupLaundry(pickupAfterCleaningInput);
+    repositoryEvents.storeOnPickupLaundry(pickupAfterCleaningInput);
 
 }

@@ -4,9 +4,10 @@ import { BeddingSetsState } from "../../../interfaces/bedding-sets-states-report
 import { DateTime } from "luxon";
 import RepositoryDateZero from "../../../infrastructure/repositories/repository-date-zero.js";
 import parseDate from "../../../utils/datetime-parser.js";
+import EventsRepository from "../../../infrastructure/repositories/repository-events.js";
 
 export default async function useCaseInitBeddingSets() {
-  const beddingSetsReport = useCaseBaddingSetStateReport();
+  const beddingSetsReport = useCaseBaddingSetStateReport(EventsRepository.getInstance());
 
   // crea sequenza di input per creare un BeddingSetsState
   const dateZero: string = await input({

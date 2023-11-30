@@ -2,16 +2,20 @@ import { describe, expect } from '@jest/globals';
 import useCaseBeddingSetsStatesReport, { UseCaseBeddingSetsStatesReport, Booking } from '../src/use-case-bedding-sets-states-report';
 import { BeddingSetsState, BeddingSetsStatesReport } from '../src/interfaces/bedding-sets-states-report';
 import RepositoryDateZero from '../src/infrastructure/repositories/repository-date-zero.js';
+import EventsRepository from '../src/infrastructure/repositories/repository-events.js';
 
 
 const date_zero = RepositoryDateZero.setDateZero(new Date(0));
 const day = 24 * 3600 * 1000;
 const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
+let eventsRepository: EventsRepository;
 
 beforeEach(() => {
-  beddingSetsStatesReport = useCaseBeddingSetsStatesReport().renew();
-  beddingSetsStatesReport.storeAddBeddingSets(amountOfBeddingSet);
+  eventsRepository = EventsRepository.renew();
+  beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository).renew(eventsRepository);
+  
+  eventsRepository.storeAddBeddingSets(amountOfBeddingSet);
 })
 
 describe('beddingSetstatesReport', () => {
@@ -155,7 +159,7 @@ describe('beddingSetstatesReport', () => {
   });
 
   it('initial state', () => {
-    beddingSetsStatesReport.storeAddBeddingSets(-amountOfBeddingSet); // reset the initial amount of set
+    eventsRepository.storeAddBeddingSets(-amountOfBeddingSet); // reset the initial amount of set
     const InitialState: BeddingSetsState = {
       cleaned: 10,
       in_use: 9,

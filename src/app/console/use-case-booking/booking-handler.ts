@@ -1,11 +1,12 @@
 import { input } from "@inquirer/prompts";
 import { DateTime } from "luxon";
-import useCaseBaddingSetStateReport, { Booking } from "../../../use-case-bedding-sets-states-report.js";
+import { Booking } from "../../../use-case-bedding-sets-states-report.js";
 import parseDate from "../../../utils/datetime-parser.js";
+import EventsRepository from "../../../infrastructure/repositories/repository-events.js";
 
 
 export default async function useCaseBookingInput() {
-  const beddingSetsReport = useCaseBaddingSetStateReport();
+  const eventsRepository = EventsRepository.getInstance();
 
   const checkInDate = await input({
     message: 'data check-in',
@@ -39,7 +40,7 @@ export default async function useCaseBookingInput() {
   console.log(JSON.stringify(bookingInput, null, 2));
   console.log(bookingInput.checkInDate.toLocaleDateString());
 
-  beddingSetsReport.storeBookingConfirmed(bookingInput);
+  eventsRepository.storeBookingConfirmed(bookingInput);
 
   function isDateTimeValid(): ((value: string) => string | boolean | Promise<string | boolean>) | undefined {
     return (input) => {
