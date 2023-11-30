@@ -32,15 +32,12 @@ export class UseCaseBeddingSetsStatesReport {
 
     private static instance: UseCaseBeddingSetsStatesReport | null;
 
-    //bookingsConfirmed: Booking[];
-    cleaningDepots: InCleaning[];
-    pickups: Pickup[];
+    //pickups: Pickup[];
     initialState: BeddingSetsState | undefined
     eventsRepository: EventsRepository;
 
     private constructor(eventsRepository: EventsRepository ) {
-        this.cleaningDepots = [];
-        this.pickups = [];
+        //this.pickups = [];
         this.eventsRepository = eventsRepository;
     }
 
@@ -74,29 +71,18 @@ export class UseCaseBeddingSetsStatesReport {
         return report;
     };
 
-
-    storeBrougthForCleaningEvent(InCleaning: InCleaning) {
-        this.cleaningDepots.push(InCleaning);
-    }
-
-    storeOnPickupLaundry(pickup: Pickup) {
-        this.pickups.push(pickup);
-    }
-
     beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateTimeZero: DateTime, days: number): BeddingSetsStateOnDate => {
         const current_date = dateTimeZero.plus({ days: days });
 
-        //const onAddBeddingSets = this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
-        // assegna onAddBeddingSets chiamando EventsRepository
         const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(current_date); 
 
         const checkInBooking = this.eventsRepository.findCheckInBookingEvents(current_date);
         const checkOutBooking = this.eventsRepository.findChecOutBookingEvents(current_date);
 
-        const InCleaning = this.cleaningDepots.find(InCleaning => DateTime.fromJSDate(InCleaning.date).toMillis() === current_date.toMillis());
-        const onFinishCleaning = this.cleaningDepots.find(InCleaning => DateTime.fromJSDate(InCleaning.date).plus({ days: InCleaning.cleaningTime + 1 }).toMillis() === current_date.toMillis());
+        const InCleaning = this.eventsRepository.findCleaningDepotsEvents(current_date);
+        const onFinishCleaning = this.eventsRepository.findFinishCleaningEvents(current_date);
 
-        const pickup = this.pickups.find(pickup => DateTime.fromJSDate(pickup.date).toMillis() === current_date.toMillis());
+        const pickup = this.eventsRepository.findPickupEvents(current_date);
 
         if (onAddBeddingSets.length > 0) {
             onAddBeddingSets.forEach(addition => {
@@ -112,23 +98,23 @@ export class UseCaseBeddingSetsStatesReport {
             beddingSets.onCheckOut(checkOutBooking[0].beddingSets);
         }
 
-        if (InCleaning) {
-            beddingSets.OnBrougthForCleaning(InCleaning.sets);
+        if (InCleaning.length >=1) {
+            beddingSets.OnBrougthForCleaning(InCleaning[0].sets);
         }
 
-        if (onFinishCleaning) {
-            beddingSets.onFinishCleaning(onFinishCleaning.sets);
+        if (onFinishCleaning.length >=1) {
+            beddingSets.onFinishCleaning(onFinishCleaning[0].sets);
         }
 
-        if (pickup) {
-            beddingSets.onPickupLaundry(pickup.sets);
+        if (pickup.length >=1) {
+            beddingSets.onPickupLaundry(pickup[0].sets);
         }
 
         const { cleaned, in_use, dirty, cleaning, in_laundery } = beddingSets as BeddingSetsState;
 
         return {
             date: current_date.toJSDate(),
-            events: this.getEvents(checkInBooking[0], checkOutBooking[0], InCleaning, pickup),
+            events: this.getEvents(checkInBooking[0], checkOutBooking[0], InCleaning[0], pickup[0]),
             cleaned,
             in_use,
             dirty,

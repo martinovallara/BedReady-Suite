@@ -120,7 +120,7 @@ describe('beddingSetstatesReport', () => {
 
       eventsRepository.storeBookingConfirmed(bookings[0]);
 
-      beddingSetsStatesReport.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
+      eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
 
@@ -131,8 +131,6 @@ describe('beddingSetstatesReport', () => {
       expect(report.days[10]).toMatchObject({ date: new Date(10 * day), cleaned: 8, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 1 });
 
     });
-
-
   });
 
   it('show events', () => {
@@ -147,8 +145,8 @@ describe('beddingSetstatesReport', () => {
 
     eventsRepository.storeBookingConfirmed(bookings[0]);
 
-    beddingSetsStatesReport.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-    beddingSetsStatesReport.storeOnPickupLaundry({ date: new Date(4 * day), sets: 1 });
+    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
+    eventsRepository.storeOnPickupLaundry({ date: new Date(4 * day), sets: 1 });
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 

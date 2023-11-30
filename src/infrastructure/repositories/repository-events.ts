@@ -59,7 +59,19 @@ export default class EventsRepository {
 
     findChecOutBookingEvents(current_date: DateTime): Booking[] {
         return this.bookingsConfirmed.filter(booking => this.onCheckOut(booking, current_date));
-     }
+    }
+
+    findCleaningDepotsEvents(current_date: DateTime): InCleaning[] {
+        return this.cleaningDepots.filter(InCleaning => DateTime.fromJSDate(InCleaning.date).toMillis() === current_date.toMillis());
+    }
+
+    findFinishCleaningEvents(current_date: DateTime): InCleaning[] {
+        return this.cleaningDepots.filter(InCleaning => DateTime.fromJSDate(InCleaning.date).plus({ days: InCleaning.cleaningTime + 1 }).toMillis() === current_date.toMillis());
+    }
+
+    findPickupEvents(current_date: DateTime): Pickup[] {
+        return this.pickups.filter(pickup => DateTime.fromJSDate(pickup.date).toMillis() === current_date.toMillis());   
+    }
 
     private onAddBeddingSets(addition: AdditionBeddingSets, current_date: DateTime): unknown {
         const addingBeddingSetDate = DateTime.fromJSDate(addition.date);
