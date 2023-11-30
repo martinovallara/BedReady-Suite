@@ -4,29 +4,35 @@ import useCaseInitBeddingSets from './app/console/use-case-init-bedding-sets/ini
 import { Separator } from '@inquirer/prompts';
 import useCaseBaddingSetStateReport from './use-case-bedding-sets-states-report.js';
 import showReport from './app/console/presenter/table-report.js';
-import useCaseInCleaning from './app/console/use-case-in-cleaning/in-cleaning-handler.js';
+import useCaseInCleaningInput from './app/console/use-case-in-cleaning/in-cleaning-handler.js';
+import useCasePickupAfterCleaningInput from './app/console/use-case-pickup/pickup-after-cleaning-handler.js';
 
 export async function promptLoop() {
 
-  type Command = 'initBeddingSets' | 'booking' | 'inCleaning' | 'exit';
+  type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' |'exit';
   function askCommand(): Promise<Command> {
     return select({
       message: 'Seleziona il comando da eseguire',
       choices: [
         {
           name: 'setup',
-          value: 'initBeddingSets',
+          value: 'store-initBeddingSets',
           description: 'Imposta il numero di sets matrimoniali in ogni stato (pulite, in uso, sporche, in pulizia, in lavanderia) ',
         },
         {
           name: 'booking',
-          value: 'booking',
+          value: 'store-booking',
           description: 'registra la prenotazione, con data check-in, set matrimoniali, e data di check-out.',
         },
         {
           name: 'consegna set matrimoniali per la pulizia',
-          value: 'inCleaning',
-          description: 'registra la consenga del sets matrimoniali per la pulizia.',
+          value: 'store-inCleaning',
+          description: 'registra la consenga dei sets matrimoniali per la pulizia.',
+        },
+        {
+          name: 'ritiro set matrimoniali',
+          value: 'store-pickupAfterCleaning',
+          description: 'registra il ritiro dei sets matrimoniali puliti.',
         },
         new Separator(),
         {
@@ -41,17 +47,21 @@ export async function promptLoop() {
   let answer = await askCommand();
 
   while (answer !== 'exit') {
-    if (answer === 'initBeddingSets') {
+    if (answer === 'store-initBeddingSets') {
       await useCaseInitBeddingSets();
     };
 
-    if (answer === 'inCleaning') {
-      await useCaseInCleaning();
+    if (answer === 'store-inCleaning') {
+      await useCaseInCleaningInput();
     }
 
-    if (answer === 'booking') {
+    if (answer === 'store-booking') {
       await useCaseBookingInput();
     };
+
+    if (answer === 'store-pickupAfterCleaning') {
+      await useCasePickupAfterCleaningInput();
+    }
 
     const beddingSetsReport = useCaseBaddingSetStateReport();
     const report = beddingSetsReport.report(20);

@@ -3,7 +3,7 @@ import useCaseBaddingSetStateReport, { InCleaning } from "../../../use-case-bedd
 import { DateTime } from "luxon";
 import parseDate from "../../../utils/datetime-parser.js";
 
-export default async function useCaseInCleaning() {
+export default async function useCaseInCleaningInput() {
     const beddingSetsReport = useCaseBaddingSetStateReport();
   
     // crea sequenza di input per creare/registrare un inCleaning Event

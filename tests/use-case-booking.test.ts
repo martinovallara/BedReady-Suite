@@ -164,8 +164,6 @@ describe('beddingSetstatesReport', () => {
       in_laundery: 6
     } 
 
-
-
     beddingSetsStatesReport.InitialState(InitialState);
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
