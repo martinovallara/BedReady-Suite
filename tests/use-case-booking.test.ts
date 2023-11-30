@@ -44,7 +44,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: sets
       }
 
-      beddingSetsStatesReport.storeBookingConfirmed(booking);
+      eventsRepository.storeBookingConfirmed(booking);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -67,7 +67,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: sets
       }
 
-      beddingSetsStatesReport.storeBookingConfirmed(booking);
+      eventsRepository.storeBookingConfirmed(booking);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -95,8 +95,8 @@ describe('beddingSetstatesReport', () => {
         }
       ]
 
-      beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
-      beddingSetsStatesReport.storeBookingConfirmed(bookings[1]);
+      eventsRepository.storeBookingConfirmed(bookings[0]);
+      eventsRepository.storeBookingConfirmed(bookings[1]);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -118,7 +118,7 @@ describe('beddingSetstatesReport', () => {
         }
       ]
 
-      beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
+      eventsRepository.storeBookingConfirmed(bookings[0]);
 
       beddingSetsStatesReport.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
 
@@ -145,7 +145,7 @@ describe('beddingSetstatesReport', () => {
       }
     ]
 
-    beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
+    eventsRepository.storeBookingConfirmed(bookings[0]);
 
     beddingSetsStatesReport.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
     beddingSetsStatesReport.storeOnPickupLaundry({ date: new Date(4 * day), sets: 1 });
@@ -184,7 +184,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: 1
       }
     ]
-    beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
+    eventsRepository.storeBookingConfirmed(bookings[0]);
     beddingSetsStatesReport.report(2);
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(2);
 

@@ -32,14 +32,13 @@ export class UseCaseBeddingSetsStatesReport {
 
     private static instance: UseCaseBeddingSetsStatesReport | null;
 
-    bookingsConfirmed: Booking[];
+    //bookingsConfirmed: Booking[];
     cleaningDepots: InCleaning[];
     pickups: Pickup[];
     initialState: BeddingSetsState | undefined
     eventsRepository: EventsRepository;
 
     private constructor(eventsRepository: EventsRepository ) {
-        this.bookingsConfirmed = [];
         this.cleaningDepots = [];
         this.pickups = [];
         this.eventsRepository = eventsRepository;
@@ -75,9 +74,7 @@ export class UseCaseBeddingSetsStatesReport {
         return report;
     };
 
-    storeBookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
-        this.bookingsConfirmed.push(booking);
-    };
+
     storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
     }
@@ -91,10 +88,10 @@ export class UseCaseBeddingSetsStatesReport {
 
         //const onAddBeddingSets = this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
         // assegna onAddBeddingSets chiamando EventsRepository
-        const onAddBeddingSets = this.eventsRepository.findEvents('Add Bedding Set', current_date); 
+        const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(current_date); 
 
-        const checkInBooking = this.bookingsConfirmed.find(booking => this.onCheckIn(booking, current_date));
-        const checkOutBooking = this.bookingsConfirmed.find(booking => this.onCheckOut(booking, current_date));
+        const checkInBooking = this.eventsRepository.findCheckInBookingEvents(current_date);
+        const checkOutBooking = this.eventsRepository.findChecOutBookingEvents(current_date);
 
         const InCleaning = this.cleaningDepots.find(InCleaning => DateTime.fromJSDate(InCleaning.date).toMillis() === current_date.toMillis());
         const onFinishCleaning = this.cleaningDepots.find(InCleaning => DateTime.fromJSDate(InCleaning.date).plus({ days: InCleaning.cleaningTime + 1 }).toMillis() === current_date.toMillis());
@@ -107,12 +104,12 @@ export class UseCaseBeddingSetsStatesReport {
             })
         }
 
-        if (checkInBooking) {
-            beddingSets.onCheckIn(checkInBooking.beddingSets);
+        if (checkInBooking.length >=1) {
+            beddingSets.onCheckIn(checkInBooking[0].beddingSets);
         }
 
-        if (checkOutBooking) {
-            beddingSets.onCheckOut(checkOutBooking.beddingSets);
+        if (checkOutBooking.length >=1) {
+            beddingSets.onCheckOut(checkOutBooking[0].beddingSets);
         }
 
         if (InCleaning) {
@@ -131,7 +128,7 @@ export class UseCaseBeddingSetsStatesReport {
 
         return {
             date: current_date.toJSDate(),
-            events: this.getEvents(checkInBooking, checkOutBooking, InCleaning, pickup),
+            events: this.getEvents(checkInBooking[0], checkOutBooking[0], InCleaning, pickup),
             cleaned,
             in_use,
             dirty,
@@ -139,18 +136,6 @@ export class UseCaseBeddingSetsStatesReport {
             in_laundery
         };
     };
-
-    private onCheckOut: (booking: Booking, current_date: DateTime) => boolean = (booking: Booking, current_date: DateTime) => {
-        const checkOut = DateTime.fromJSDate(booking.checkOutDate);
-        return checkOut.toMillis() === current_date.toMillis();
-    };
-
-    private onCheckIn: (booking: Booking, current_date: DateTime) => boolean = (booking: Booking, current_date: DateTime) => {
-        const checkIn = DateTime.fromJSDate(booking.checkInDate);
-        return checkIn.toMillis() === current_date.toMillis();
-    };
-
-
 
     getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning, pickup?: Pickup): Event[] {
         const eventMappings: { condition: Booking | InCleaning | Pickup | undefined, name: EventName, sets: number | undefined }[] = [

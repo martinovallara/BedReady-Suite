@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { BeddingSetsState, EventName } from "../../interfaces/bedding-sets-states-report.js";
+import { BeddingSetsState } from "../../interfaces/bedding-sets-states-report.js";
 import { AdditionBeddingSets, Booking, InCleaning, Pickup } from "../../use-case-bedding-sets-states-report.js";
 import RepositoryDateZero from "./repository-date-zero.js";
 
@@ -44,18 +44,36 @@ export default class EventsRepository {
     };
     storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
-    }
-
+    };
     storeOnPickupLaundry(pickup: Pickup) {
         this.pickups.push(pickup);
-    }
+    };
 
-    findEvents(eventName: EventName, current_date: DateTime): AdditionBeddingSets[] {
+    findAddBeddingSetsEvents(current_date: DateTime): AdditionBeddingSets[] {
         return this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
     }
+
+    findCheckInBookingEvents(current_date: DateTime): Booking[] {
+       return this.bookingsConfirmed.filter(booking => this.onCheckIn(booking, current_date));
+    }
+
+    findChecOutBookingEvents(current_date: DateTime): Booking[] {
+        return this.bookingsConfirmed.filter(booking => this.onCheckOut(booking, current_date));
+     }
 
     private onAddBeddingSets(addition: AdditionBeddingSets, current_date: DateTime): unknown {
         const addingBeddingSetDate = DateTime.fromJSDate(addition.date);
         return addingBeddingSetDate.toMillis() === current_date.toMillis();
     }
+
+    private onCheckIn: (booking: Booking, current_date: DateTime) => boolean = (booking: Booking, current_date: DateTime) => {
+        const checkIn = DateTime.fromJSDate(booking.checkInDate);
+        return checkIn.toMillis() === current_date.toMillis();
+    };
+
+    private onCheckOut: (booking: Booking, current_date: DateTime) => boolean = (booking: Booking, current_date: DateTime) => {
+        const checkOut = DateTime.fromJSDate(booking.checkOutDate);
+        return checkOut.toMillis() === current_date.toMillis();
+    };
+
 }
