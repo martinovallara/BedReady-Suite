@@ -4,7 +4,6 @@ import { BeddingSetsState } from "../../../interfaces/bedding-sets-states-report
 import { DateTime } from "luxon";
 import RepositoryDateZero from "../../../infrastructure/repositories/repository-date-zero.js";
 import parseDate from "../../../utils/datetime-parser.js";
-import showReport from "../presenter/table-report.js";
 
 export default async function useCaseInitBeddingSets() {
   const beddingSetsReport = useCaseBaddingSetStateReport();

@@ -11,7 +11,7 @@ let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 
 beforeEach(() => {
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport().renew();
-  beddingSetsStatesReport.addBeddingSets(amountOfBeddingSet);
+  beddingSetsStatesReport.storeAddBeddingSets(amountOfBeddingSet);
 })
 
 describe('beddingSetstatesReport', () => {
@@ -40,7 +40,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: sets
       }
 
-      beddingSetsStatesReport.bookingConfirmed(booking);
+      beddingSetsStatesReport.storeBookingConfirmed(booking);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -63,7 +63,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: sets
       }
 
-      beddingSetsStatesReport.bookingConfirmed(booking);
+      beddingSetsStatesReport.storeBookingConfirmed(booking);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -91,8 +91,8 @@ describe('beddingSetstatesReport', () => {
         }
       ]
 
-      beddingSetsStatesReport.bookingConfirmed(bookings[0]);
-      beddingSetsStatesReport.bookingConfirmed(bookings[1]);
+      beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
+      beddingSetsStatesReport.storeBookingConfirmed(bookings[1]);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -104,7 +104,7 @@ describe('beddingSetstatesReport', () => {
     });
 
 
-    it('when sets is to brougth for cleaning to laundry only after 7 days the sets become ready to pickup', () => {
+    it('when sets is brougth for cleaning to laundry only after 7 days the sets become ready to pickup', () => {
 
       const bookings: Booking[] = [
         {
@@ -114,9 +114,9 @@ describe('beddingSetstatesReport', () => {
         }
       ]
 
-      beddingSetsStatesReport.bookingConfirmed(bookings[0]);
+      beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
 
-      beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
+      beddingSetsStatesReport.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
 
@@ -141,10 +141,10 @@ describe('beddingSetstatesReport', () => {
       }
     ]
 
-    beddingSetsStatesReport.bookingConfirmed(bookings[0]);
+    beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
 
-    beddingSetsStatesReport.OnBrougthForCleaning({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-    beddingSetsStatesReport.onPickupLaundry({ date: new Date(4 * day), sets: 1 });
+    beddingSetsStatesReport.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
+    beddingSetsStatesReport.storeOnPickupLaundry({ date: new Date(4 * day), sets: 1 });
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -155,7 +155,7 @@ describe('beddingSetstatesReport', () => {
   });
 
   it('initial state', () => {
-    beddingSetsStatesReport.addBeddingSets(-amountOfBeddingSet); // reset the initial amount of set
+    beddingSetsStatesReport.storeAddBeddingSets(-amountOfBeddingSet); // reset the initial amount of set
     const InitialState: BeddingSetsState = {
       cleaned: 10,
       in_use: 9,
@@ -182,7 +182,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: 1
       }
     ]
-    beddingSetsStatesReport.bookingConfirmed(bookings[0]);
+    beddingSetsStatesReport.storeBookingConfirmed(bookings[0]);
     beddingSetsStatesReport.report(2);
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(2);
 

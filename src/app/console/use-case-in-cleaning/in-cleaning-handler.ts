@@ -41,8 +41,8 @@ export default async function useCaseInCleaning() {
     const inCleaning: InCleaning = {
       date: parseDate(inCleaningDate),
       sets: parseInt(cleaned),
-      cleaningTime: 0
+      cleaningTime: parseInt(cleaningTime),
     };
 
-    beddingSetsReport.OnBrougthForCleaning(inCleaning);
+    beddingSetsReport.storeBrougthForCleaningEvent(inCleaning);
 }

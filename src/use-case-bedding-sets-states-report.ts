@@ -74,22 +74,21 @@ export class UseCaseBeddingSetsStatesReport {
         return report;
     };
 
-    addBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
-        //this.beddingSets.addBeddingSets(amountOfBeddingSets);
+    storeAddBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
         this.additionBeddingSets.push({
             date: RepositoryDateZero.getDateZero(),
             sets: amountOfBeddingSets
         });
     };
 
-    bookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
+    storeBookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
         this.bookingsConfirmed.push(booking);
     };
-    OnBrougthForCleaning(InCleaning: InCleaning) {
+    storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
     }
 
-    onPickupLaundry(pickup: Pickup) {
+    storeOnPickupLaundry(pickup: Pickup) {
         this.pickups.push(pickup);
     }
 

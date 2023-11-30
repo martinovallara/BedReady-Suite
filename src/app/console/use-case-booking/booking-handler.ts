@@ -2,7 +2,6 @@ import { input } from "@inquirer/prompts";
 import { DateTime } from "luxon";
 import useCaseBaddingSetStateReport, { Booking } from "../../../use-case-bedding-sets-states-report.js";
 import parseDate from "../../../utils/datetime-parser.js";
-import showReport from "../../console/presenter/table-report.js";
 
 
 export default async function useCaseBookingInput() {
@@ -40,7 +39,7 @@ export default async function useCaseBookingInput() {
   console.log(JSON.stringify(bookingInput, null, 2));
   console.log(bookingInput.checkInDate.toLocaleDateString());
 
-  beddingSetsReport.bookingConfirmed(bookingInput);
+  beddingSetsReport.storeBookingConfirmed(bookingInput);
 
   function isDateTimeValid(): ((value: string) => string | boolean | Promise<string | boolean>) | undefined {
     return (input) => {
