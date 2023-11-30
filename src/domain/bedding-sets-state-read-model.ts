@@ -8,8 +8,8 @@ export default class BeddingSetsReadModel implements BeddingSetsState {
     cleaning: number = 0;
     in_laundery: number = 0;
 
-    setup(initialState: BeddingSetsState) {
-        Object.assign(this, initialState);
+    setup(initialState: BeddingSetsState | undefined) {
+        initialState && Object.assign(this, initialState);
     }
 
     onCheckIn: (beddingSets: number) => void = (beddingSets: number) => {

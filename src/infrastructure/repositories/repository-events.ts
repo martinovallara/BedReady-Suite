@@ -49,6 +49,10 @@ export default class EventsRepository {
         this.pickups.push(pickup);
     };
 
+    storeInitialState: (initialState: BeddingSetsState) => void = (initialState: BeddingSetsState) => {
+        this.initialState = initialState;
+    }
+
     findAddBeddingSetsEvents(current_date: DateTime): AdditionBeddingSets[] {
         return this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
     }
@@ -87,5 +91,4 @@ export default class EventsRepository {
         const checkOut = DateTime.fromJSDate(booking.checkOutDate);
         return checkOut.toMillis() === current_date.toMillis();
     };
-
 }

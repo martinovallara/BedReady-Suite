@@ -29,39 +29,17 @@ export type AdditionBeddingSets = {
 }
 
 export class UseCaseBeddingSetsStatesReport {
-
-    private static instance: UseCaseBeddingSetsStatesReport | null;
-
-    //pickups: Pickup[];
-    initialState: BeddingSetsState | undefined
+    
     eventsRepository: EventsRepository;
 
-    private constructor(eventsRepository: EventsRepository ) {
-        //this.pickups = [];
+    constructor(eventsRepository: EventsRepository ) {
         this.eventsRepository = eventsRepository;
-    }
-
-    public static getInstance(eventsRepository: EventsRepository): UseCaseBeddingSetsStatesReport {
-        if (!UseCaseBeddingSetsStatesReport.instance) {
-            UseCaseBeddingSetsStatesReport.instance = new UseCaseBeddingSetsStatesReport(eventsRepository);
-        }
-        return UseCaseBeddingSetsStatesReport.instance;
-    }
-
-    renew(eventsRepository: EventsRepository): UseCaseBeddingSetsStatesReport {
-        UseCaseBeddingSetsStatesReport.instance = null;
-        return UseCaseBeddingSetsStatesReport.getInstance(eventsRepository);
-    }
-
-
-    InitialState(InitialState: BeddingSetsState) {
-        this.initialState = InitialState;
     }
 
     report(forecastDays: number): BeddingSetsStatesReport {
         const beddingSets = new BeddingSetsReadModel();
         const date_time_zero = DateTime.fromJSDate(RepositoryDateZero.getDateZero());
-        if (this.initialState !== undefined) beddingSets.setup(this.initialState)
+        beddingSets.setup(this.eventsRepository.initialState)
 
         const report: BeddingSetsStatesReport = {
             days: Array.from({ length: forecastDays + 1 }, (_, index) => {
@@ -138,5 +116,5 @@ export class UseCaseBeddingSetsStatesReport {
 }
 
 export default function useCaseBaddingSetStateReport(eventsRepository: EventsRepository) {
-    return UseCaseBeddingSetsStatesReport.getInstance(eventsRepository);
+    return new UseCaseBeddingSetsStatesReport(eventsRepository);
 } 

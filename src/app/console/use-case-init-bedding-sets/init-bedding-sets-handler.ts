@@ -7,9 +7,8 @@ import parseDate from "../../../utils/datetime-parser.js";
 import EventsRepository from "../../../infrastructure/repositories/repository-events.js";
 
 export default async function useCaseInitBeddingSets() {
-  const beddingSetsReport = useCaseBaddingSetStateReport(EventsRepository.getInstance());
+  const eventsRepository = EventsRepository.getInstance();
 
-  // crea sequenza di input per creare un BeddingSetsState
   const dateZero: string = await input({
     message: "data a cui corrisponde lo stato iniziale dei sets matrimoniali",
     default: DateTime.now().toFormat('dd/LL/yy'),
@@ -87,6 +86,6 @@ export default async function useCaseInitBeddingSets() {
     in_laundery: parseInt(in_laundery)
   }
 
-  beddingSetsReport.InitialState(state);
+  eventsRepository.storeInitialState(state);
   RepositoryDateZero.setDateZero(parseDate(dateZero));
 }

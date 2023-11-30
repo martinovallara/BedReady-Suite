@@ -13,7 +13,7 @@ let eventsRepository: EventsRepository;
 
 beforeEach(() => {
   eventsRepository = EventsRepository.renew();
-  beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository).renew(eventsRepository);
+  beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
   
   eventsRepository.storeAddBeddingSets(amountOfBeddingSet);
 })
@@ -166,7 +166,7 @@ describe('beddingSetstatesReport', () => {
       in_laundery: 6
     } 
 
-    beddingSetsStatesReport.InitialState(InitialState);
+    eventsRepository.storeInitialState(InitialState);
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
 
