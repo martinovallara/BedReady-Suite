@@ -1,7 +1,7 @@
 import { DateTime } from "luxon"
 
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
-import BeddingSetsReadModel from "./domain/bedding-sets-state.js";
+import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
 import RepositoryDateZero from "./infrastructure/repositories/repository-date-zero.js";
 
 
@@ -11,18 +11,18 @@ export type Booking = {
     beddingSets: number;
 };
 
-type InCleaning = {
+export type InCleaning = {
     date: Date;
     sets: number;
     cleaningTime: number;
 };
 
-type Pickup = {
+export type Pickup = {
     date: Date;
     sets: number;
 };
 
-type AdditionBeddingSets = {
+export type AdditionBeddingSets = {
     date: Date,
     sets: number
 }
@@ -30,7 +30,6 @@ type AdditionBeddingSets = {
 export class UseCaseBeddingSetsStatesReport {
 
     private static instance: UseCaseBeddingSetsStatesReport | null;
-    //beddingSets: BeddingSets;
 
     additionBeddingSets: AdditionBeddingSets[]
     bookingsConfirmed: Booking[];
@@ -59,7 +58,6 @@ export class UseCaseBeddingSetsStatesReport {
 
 
     InitialState(InitialState: BeddingSetsState) {
-        //this.beddingSets.setup(InitialState);
         this.initialState = InitialState;
     }
 

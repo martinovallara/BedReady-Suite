@@ -19,13 +19,12 @@ export default function showReport(report: BeddingSetsStatesReport )  {
       ]
     })
   
-    // instantiate
+   
   const table_bedding_sets = new Table({
     head: ['data', 'eventi', 'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia'],
     style: { 'padding-left': 1, 'padding-right': 1 } // Add style property
   });
   
-    // table is an Array, so you can `push`, `unshift`, `splice` and friends
     report_table.forEach((row) => {
       const row_trasformed = row.map((cell, index) => {
   
@@ -35,5 +34,4 @@ export default function showReport(report: BeddingSetsStatesReport )  {
     });
   
     console.log(table_bedding_sets.toString());
-  
   }

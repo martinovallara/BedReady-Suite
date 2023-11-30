@@ -87,12 +87,6 @@ export default async function useCaseInitBeddingSets() {
     in_laundery: parseInt(in_laundery)
   }
 
-
   beddingSetsReport.InitialState(state);
   RepositoryDateZero.setDateZero(parseDate(dateZero));
-
-  const report = beddingSetsReport.report(20);
-  showReport(report);
-
-
 }

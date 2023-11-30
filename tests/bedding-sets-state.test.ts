@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import BeddingSets from '../src/domain/bedding-sets-state';
+import BeddingSets from '../src/domain/bedding-sets-state-read-model.js';
 import { BeddingSetsState, BeddingSetsStateOnDate } from '../src/interfaces/bedding-sets-states-report';
 
 describe('BeddingSets', () => {
