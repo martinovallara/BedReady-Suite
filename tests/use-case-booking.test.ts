@@ -1,8 +1,8 @@
 import { describe, expect } from '@jest/globals';
 import useCaseBeddingSetsStatesReport, { UseCaseBeddingSetsStatesReport, Booking } from '../src/use-case-bedding-sets-states-report';
 import { BeddingSetsState, BeddingSetsStatesReport } from '../src/interfaces/bedding-sets-states-report';
-import RepositoryDateZero from '../src/infrastructure/repositories/repository-date-zero.js';
-import EventsRepository from '../src/infrastructure/repositories/repository-events.js';
+import RepositoryDateZero from '../src/infrastructure/repositories/date-zero-repository.js';
+import EventsRepository from '../src/infrastructure/repositories/events-repository.js';
 
 
 const date_zero = RepositoryDateZero.setDateZero(new Date(0));
@@ -11,11 +11,25 @@ const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 let eventsRepository: EventsRepository;
 
+
+
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  writeFile: jest.fn(),
+  existsSync: jest.fn().mockReturnValue(false)
+}));
+
+
 beforeEach(() => {
   eventsRepository = EventsRepository.renew();
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
   
   eventsRepository.storeAddBeddingSets(amountOfBeddingSet);
+})
+
+afterEach(() => {
+  // restore mock
+  jest.clearAllMocks();
 })
 
 describe('beddingSetstatesReport', () => {

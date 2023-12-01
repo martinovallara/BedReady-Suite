@@ -2,8 +2,8 @@ import { DateTime } from "luxon"
 
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
-import RepositoryDateZero from "./infrastructure/repositories/repository-date-zero.js";
-import EventsRepository from "./infrastructure/repositories/repository-events.js";
+import RepositoryDateZero from "./infrastructure/repositories/date-zero-repository.js";
+import EventsRepository from "./infrastructure/repositories/events-repository.js";
 
 
 export type Booking = {
@@ -55,7 +55,7 @@ export class UseCaseBeddingSetsStatesReport {
         const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(current_date); 
 
         const checkInBooking = this.eventsRepository.findCheckInBookingEvents(current_date);
-        const checkOutBooking = this.eventsRepository.findChecOutBookingEvents(current_date);
+        const checkOutBooking = this.eventsRepository.findCheckOutBookingEvents(current_date);
 
         const InCleaning = this.eventsRepository.findCleaningDepotsEvents(current_date);
         const onFinishCleaning = this.eventsRepository.findFinishCleaningEvents(current_date);

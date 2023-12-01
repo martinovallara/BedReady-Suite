@@ -1,10 +1,9 @@
-import useCaseBaddingSetStateReport from "../../../use-case-bedding-sets-states-report.js";
 import { input } from "@inquirer/prompts";
 import { BeddingSetsState } from "../../../interfaces/bedding-sets-states-report.js";
 import { DateTime } from "luxon";
-import RepositoryDateZero from "../../../infrastructure/repositories/repository-date-zero.js";
+import RepositoryDateZero from "../../../infrastructure/repositories/date-zero-repository.js";
 import parseDate from "../../../utils/datetime-parser.js";
-import EventsRepository from "../../../infrastructure/repositories/repository-events.js";
+import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
 
 export default async function useCaseInitBeddingSets() {
   const eventsRepository = EventsRepository.getInstance();

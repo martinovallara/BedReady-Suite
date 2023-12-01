@@ -2,7 +2,7 @@ import { input } from "@inquirer/prompts";
 import { InCleaning } from "../../../use-case-bedding-sets-states-report.js";
 import { DateTime } from "luxon";
 import parseDate from "../../../utils/datetime-parser.js";
-import EventsRepostiory from '../../../infrastructure/repositories/repository-events.js';
+import EventsRepostiory from '../../../infrastructure/repositories/events-repository.js';
 
 export default async function useCaseInCleaningInput() {
   const repositoryEvents = EventsRepostiory.getInstance();

@@ -26,5 +26,11 @@
   ],
   "moduleNameMapper": {
     "^(\\.{1,2}/.*)\\.js$": "$1"
-  }
+  },
+  "setupFiles": [
+    "<rootDir>/tests/config-test.ts" 
+  ],
+  "watchPathIgnorePatterns": [
+    "/storage/.*"
+  ]
 }

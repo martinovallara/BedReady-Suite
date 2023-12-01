@@ -6,12 +6,21 @@ import useCaseBaddingSetStateReport from './use-case-bedding-sets-states-report.
 import showReport from './app/console/presenter/table-report.js';
 import useCaseInCleaningInput from './app/console/use-case-in-cleaning/in-cleaning-handler.js';
 import useCasePickupAfterCleaningInput from './app/console/use-case-pickup/pickup-after-cleaning-handler.js';
-import EventsRepository from './infrastructure/repositories/repository-events.js';
+import EventsRepository from './infrastructure/repositories/events-repository.js';
 
 export async function promptLoop() {
 
   type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' |'exit';
   function askCommand(): Promise<Command> {
+    
+    
+    const eventsRepository = EventsRepository.getInstance();
+    if (eventsRepository.getEvents()) {
+      const beddingSetsReport = useCaseBaddingSetStateReport(eventsRepository);
+      const report = beddingSetsReport.report(20)
+      showReport(report);
+    }
+
     return select({
       message: 'Seleziona il comando da eseguire',
       choices: [
