@@ -2,7 +2,6 @@ import { DateTime } from "luxon"
 
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
-import RepositoryDateZero from "./infrastructure/repositories/date-zero-repository.js";
 import EventsRepository from "./infrastructure/repositories/events-repository.js";
 
 
@@ -38,7 +37,7 @@ export class UseCaseBeddingSetsStatesReport {
 
     report(forecastDays: number): BeddingSetsStatesReport {
         const beddingSets = new BeddingSetsReadModel();
-        const date_time_zero = DateTime.fromJSDate(RepositoryDateZero.getDateZero());
+        const date_time_zero = DateTime.fromJSDate(this.eventsRepository.dateTimeZero());
         beddingSets.setup(this.eventsRepository.initialState)
 
         const report: BeddingSetsStatesReport = {

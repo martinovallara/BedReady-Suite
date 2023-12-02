@@ -14,6 +14,10 @@ export type BeddingSetsStateOnDate = BeddingSetsState & {
   events: Event[];
 };
 
+export type InitialState = BeddingSetsState & {
+  date: Date;
+}
+
 export type BeddingSetsState = {
   cleaned: number;
   in_use: number;

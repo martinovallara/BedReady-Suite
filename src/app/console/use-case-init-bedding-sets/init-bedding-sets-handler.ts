@@ -1,7 +1,6 @@
 import { input } from "@inquirer/prompts";
-import { BeddingSetsState } from "../../../interfaces/bedding-sets-states-report.js";
+import { InitialState } from "../../../interfaces/bedding-sets-states-report.js";
 import { DateTime } from "luxon";
-import RepositoryDateZero from "../../../infrastructure/repositories/date-zero-repository.js";
 import parseDate from "../../../utils/datetime-parser.js";
 import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
 
@@ -77,7 +76,8 @@ export default async function useCaseInitBeddingSets() {
     }
   })
 
-  const state: BeddingSetsState = {
+  const state: InitialState = {
+    date: parseDate(dateZero),
     cleaned: parseInt(cleaned),
     in_use: parseInt(in_use),
     dirty: parseInt(dirty),
@@ -86,5 +86,5 @@ export default async function useCaseInitBeddingSets() {
   }
 
   eventsRepository.storeInitialState(state);
-  RepositoryDateZero.setDateZero(parseDate(dateZero));
+  
 }

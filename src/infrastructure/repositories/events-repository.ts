@@ -1,11 +1,13 @@
 import { DateTime } from "luxon";
-import { BeddingSetsState } from "../../interfaces/bedding-sets-states-report.js";
+import { InitialState } from "../../interfaces/bedding-sets-states-report.js";
 import { AdditionBeddingSets, Booking, InCleaning, Pickup } from "../../use-case-bedding-sets-states-report.js";
-import RepositoryDateZero from "./date-zero-repository.js";
 import fs from 'fs';
 
 
 export default class EventsRepository {
+    dateTimeZero(): Date {
+        return this.initialState?.date as Date
+    }
     getEvents(): boolean {
         // return true if some array is not empty
         return this.additionBeddingSets.length > 0 || this.bookingsConfirmed.length > 0 || this.cleaningDepots.length > 0 || this.pickups.length > 0 || this.initialState !== undefined
@@ -15,20 +17,20 @@ export default class EventsRepository {
     bookingsConfirmed: Booking[];
     cleaningDepots: InCleaning[];
     pickups: Pickup[];
-    initialState: BeddingSetsState | undefined
+    initialState: InitialState | undefined
 
-    static STORAGE_PATH: () => string = () => process.env.STORAGE_PATH as string
+    static EVENTS_STORAGE_PATH: () => string = () => process.env.EVENTS_STORAGE_PATH as string
 
     static instance: EventsRepository | null;
     static getInstance(): EventsRepository {
 
-        console.log('EventsRepository --> STORAGE_PATH:', EventsRepository.STORAGE_PATH());
+        //console.log('EventsRepository --> EVENTS_STORAGE_PATH:', EventsRepository.EVENTS_STORAGE_PATH());
 
         if (!EventsRepository.instance) {
             EventsRepository.instance = new EventsRepository();
             // deserialize from file if exists
-            if (fs.existsSync(EventsRepository.STORAGE_PATH())) {
-                const jsonData = fs.readFileSync(EventsRepository.STORAGE_PATH(), 'utf8');
+            if (fs.existsSync(EventsRepository.EVENTS_STORAGE_PATH())) {
+                const jsonData = fs.readFileSync(EventsRepository.EVENTS_STORAGE_PATH(), 'utf8');
                 const data = JSON.parse(jsonData) as EventsRepository;
 
                 EventsRepository.deserialize(EventsRepository.instance, data);
@@ -51,30 +53,27 @@ export default class EventsRepository {
         this.pickups = [];
     }
 
-    storeAddBeddingSets: (amountOfBeddingSets: number) => void = (amountOfBeddingSets: number) => {
-        this.additionBeddingSets.push({
-            date: RepositoryDateZero.getDateZero(),
-            sets: amountOfBeddingSets
-        });
-        this.persistToFile(EventsRepository.STORAGE_PATH());
+    storeAddBeddingSets: (amountOfBeddingSets: AdditionBeddingSets) => void = (amountOfBeddingSets: AdditionBeddingSets) => {
+        this.additionBeddingSets.push(amountOfBeddingSets);
+        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
     };
 
     storeBookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
         this.bookingsConfirmed.push(booking);
-        this.persistToFile(EventsRepository.STORAGE_PATH());
+        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
     };
     storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
-        this.persistToFile(EventsRepository.STORAGE_PATH());
+        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
     };
     storeOnPickupLaundry(pickup: Pickup) {
         this.pickups.push(pickup);
-        this.persistToFile(EventsRepository.STORAGE_PATH());
+        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
     };
 
-    storeInitialState: (initialState: BeddingSetsState) => void = (initialState: BeddingSetsState) => {
+    storeInitialState: (initialState: InitialState) => void = (initialState: InitialState) => {
         this.initialState = initialState;
-        this.persistToFile(EventsRepository.STORAGE_PATH());
+        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
     }
 
     findAddBeddingSetsEvents(current_date: DateTime): AdditionBeddingSets[] {
@@ -151,6 +150,10 @@ export default class EventsRepository {
             } as Pickup;
         });
 
-        instance.initialState = data["initialState"] as BeddingSetsState;
-    }
+        const initialState = data["initialState"] as InitialState;
+        instance.initialState = {
+            ...initialState,
+            date: new Date(initialState.date)
+        } as InitialState;
+    };
 }

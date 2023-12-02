@@ -1,4 +1,4 @@
-export default class RepositoryDateZero {
+/* export default class RepositoryDateZero {
     private static dateZero: Date = new Date(0)
     
     public static setDateZero(dateZero: Date): Date {
@@ -9,4 +9,4 @@ export default class RepositoryDateZero {
     public static getDateZero() {
         return RepositoryDateZero.dateZero
     }
-}
+} */

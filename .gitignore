@@ -1,5 +1,5 @@
 node_modules/
 dist/
 coverage/
-src/infrastructure/storage/storage*.json
+src/infrastructure/storage/*storage*.json
 

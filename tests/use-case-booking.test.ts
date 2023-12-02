@@ -1,11 +1,10 @@
 import { describe, expect } from '@jest/globals';
 import useCaseBeddingSetsStatesReport, { UseCaseBeddingSetsStatesReport, Booking } from '../src/use-case-bedding-sets-states-report';
-import { BeddingSetsState, BeddingSetsStatesReport } from '../src/interfaces/bedding-sets-states-report';
-import RepositoryDateZero from '../src/infrastructure/repositories/date-zero-repository.js';
+import { BeddingSetsStatesReport, InitialState } from '../src/interfaces/bedding-sets-states-report';
 import EventsRepository from '../src/infrastructure/repositories/events-repository.js';
 
 
-const date_zero = RepositoryDateZero.setDateZero(new Date(0));
+const date_zero = new Date(0);
 const day = 24 * 3600 * 1000;
 const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
@@ -24,7 +23,7 @@ beforeEach(() => {
   eventsRepository = EventsRepository.renew();
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
   
-  eventsRepository.storeAddBeddingSets(amountOfBeddingSet);
+  eventsRepository.storeInitialState(initialAmountOfBeddingSet(date_zero, amountOfBeddingSet));
 })
 
 afterEach(() => {
@@ -171,8 +170,9 @@ describe('beddingSetstatesReport', () => {
   });
 
   it('initial state', () => {
-    eventsRepository.storeAddBeddingSets(-amountOfBeddingSet); // reset the initial amount of set
-    const InitialState: BeddingSetsState = {
+    eventsRepository.storeAddBeddingSets({ date: new Date(1 * day), sets: -amountOfBeddingSet }); // reset the initial amount of set
+    const initialState: InitialState = {
+      date: date_zero,
       cleaned: 10,
       in_use: 9,
       dirty: 8,
@@ -180,7 +180,7 @@ describe('beddingSetstatesReport', () => {
       in_laundery: 6
     } 
 
-    eventsRepository.storeInitialState(InitialState);
+    eventsRepository.storeInitialState(initialState);
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
 
@@ -203,5 +203,16 @@ describe('beddingSetstatesReport', () => {
     expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet-1, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
   })
 })
+
+function initialAmountOfBeddingSet(date_zero: Date, amountOfBeddingSet: number): InitialState {
+  return {
+    date: date_zero,
+    cleaned: amountOfBeddingSet,
+    in_use: 0,
+    dirty: 0,
+    cleaning: 0,
+    in_laundery: 0
+  }
+} 
 
 

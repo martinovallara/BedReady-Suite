@@ -3,7 +3,7 @@ import fs from 'fs';
 import { Booking } from '../src/use-case-bedding-sets-states-report.js';
 import { DateTime } from 'luxon';
 
-const storagePath: string = process.env.STORAGE_PATH as string;
+const storagePath: string = process.env.EVENTS_STORAGE_PATH as string;
 
 beforeAll(() => {
     if (fs.existsSync(storagePath)) {
@@ -22,7 +22,7 @@ describe('EventsRepository', () => {
     test('loadFromFile at creation', () => {
         const eventsRepository = EventsRepository.getInstance();
 
-        expect(EventsRepository.STORAGE_PATH()).toBe(storagePath);
+        expect(EventsRepository.EVENTS_STORAGE_PATH()).toBe(storagePath);
 
         const booking: Booking = {
             checkInDate: new Date(2023, 12 - 1, 1),
@@ -30,8 +30,8 @@ describe('EventsRepository', () => {
             beddingSets: 2
         }
         eventsRepository.storeBookingConfirmed(booking);
-        eventsRepository.storeAddBeddingSets(10);
-        eventsRepository.storeInitialState({ cleaned: 9, in_use: 8, dirty: 7, cleaning: 6, in_laundery: 1 });
+        eventsRepository.storeAddBeddingSets({ date: new Date(2023, 12 - 1, 1), sets: 10});
+        eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1) ,cleaned: 9, in_use: 8, dirty: 7, cleaning: 6, in_laundery: 1 });
         eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2023, 12 - 1, 1), sets: 2, cleaningTime: 10 });
         eventsRepository.storeOnPickupLaundry({ date: new Date(2023, 12 - 1, 1), sets: 2 });
 

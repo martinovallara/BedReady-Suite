@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({path: '.env'});
 
-console.log('STORAGE_PATH', process.env.STORAGE_PATH);
+console.log('EVENTS_STORAGE_PATH', process.env.EVENTS_STORAGE_PATH);
 
 await promptLoop();
 
