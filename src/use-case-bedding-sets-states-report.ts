@@ -28,30 +28,43 @@ export type AdditionBeddingSets = {
 }
 
 export class UseCaseBeddingSetsStatesReport {
-    
-    eventsRepository: EventsRepository;
 
-    constructor(eventsRepository: EventsRepository ) {
+
+    private eventsRepository: EventsRepository;
+    private startDateReport: Date = new Date(0);
+
+    constructor(eventsRepository: EventsRepository) {
         this.eventsRepository = eventsRepository;
     }
 
     report(forecastDays: number): BeddingSetsStatesReport {
         const beddingSets = new BeddingSetsReadModel();
+
         const date_time_zero = DateTime.fromJSDate(this.eventsRepository.dateTimeZero());
         beddingSets.setup(this.eventsRepository.initialState)
 
+        // max date btween date_time_zero and startDateReport
+        const maxDate = DateTime.max(date_time_zero, DateTime.fromJSDate(this.startDateReport));
+        const daysLengthFromDateZero= maxDate.diff(date_time_zero, 'days').days
+        const reportLengthDays = daysLengthFromDateZero + forecastDays;
+
         const report: BeddingSetsStatesReport = {
-            days: Array.from({ length: forecastDays + 1 }, (_, index) => {
+            days: Array.from({ length: reportLengthDays+ 1  }, (_, index) => {
                 return this.beddingSetsStatus(beddingSets, date_time_zero, index);
             })
-        }
-        return report;
+        };
+
+        const filteredReport = {
+            days: report.days.filter(day => day.date>= this.startDateReport)
+        };
+
+        return filteredReport;
     };
 
     beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateTimeZero: DateTime, days: number): BeddingSetsStateOnDate => {
         const current_date = dateTimeZero.plus({ days: days });
 
-        const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(current_date); 
+        const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(current_date);
 
         const checkInBooking = this.eventsRepository.findCheckInBookingEvents(current_date);
         const checkOutBooking = this.eventsRepository.findCheckOutBookingEvents(current_date);
@@ -67,23 +80,23 @@ export class UseCaseBeddingSetsStatesReport {
             })
         }
 
-        if (checkInBooking.length >=1) {
+        if (checkInBooking.length >= 1) {
             beddingSets.onCheckIn(checkInBooking[0].beddingSets);
         }
 
-        if (checkOutBooking.length >=1) {
+        if (checkOutBooking.length >= 1) {
             beddingSets.onCheckOut(checkOutBooking[0].beddingSets);
         }
 
-        if (InCleaning.length >=1) {
+        if (InCleaning.length >= 1) {
             beddingSets.OnBrougthForCleaning(InCleaning[0].sets);
         }
 
-        if (onFinishCleaning.length >=1) {
+        if (onFinishCleaning.length >= 1) {
             beddingSets.onFinishCleaning(onFinishCleaning[0].sets);
         }
 
-        if (pickup.length >=1) {
+        if (pickup.length >= 1) {
             beddingSets.onPickupLaundry(pickup[0].sets);
         }
 
@@ -111,6 +124,10 @@ export class UseCaseBeddingSetsStatesReport {
         return eventMappings
             .filter(mapping => mapping.condition)
             .map(({ name, sets }) => ({ name, sets: sets ?? 0 }));
+    }
+
+    setStartDateReport(startDateReport: Date) {
+        this.startDateReport = startDateReport;
     }
 }
 

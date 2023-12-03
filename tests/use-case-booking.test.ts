@@ -202,6 +202,13 @@ describe('beddingSetstatesReport', () => {
 
     expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet-1, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
   })
+
+  it('report start at date defined in startDateReport', () => {
+    beddingSetsStatesReport.setStartDateReport(new Date(10 * day));
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
+    expect(report.days.length).toEqual(11);
+    expect(report.days[0]).toMatchObject({ date: new Date(10 * day)});
+  })
 })
 
 function initialAmountOfBeddingSet(date_zero: Date, amountOfBeddingSet: number): InitialState {
