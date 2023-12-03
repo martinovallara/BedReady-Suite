@@ -2,11 +2,11 @@ import select from '@inquirer/select';
 import useCaseBookingInput from './app/console/use-case-booking/booking-handler.js';
 import useCaseInitBeddingSets from './app/console/use-case-init-bedding-sets/init-bedding-sets-handler.js';
 import { Separator } from '@inquirer/prompts';
-import useCaseBaddingSetStateReport from './use-case-bedding-sets-states-report.js';
 import showReport from './app/console/presenter/table-report.js';
 import useCaseInCleaningInput from './app/console/use-case-in-cleaning/in-cleaning-handler.js';
 import useCasePickupAfterCleaningInput from './app/console/use-case-pickup/pickup-after-cleaning-handler.js';
 import EventsRepository from './infrastructure/repositories/events-repository.js';
+import useCaseStartDateInput from './app/console/use-case-start-date-report/start-date-reprot-input.js';
 
 export async function promptLoop() {
 
@@ -16,9 +16,7 @@ export async function promptLoop() {
     
     const eventsRepository = EventsRepository.getInstance();
     if (eventsRepository.getEvents()) {
-      const beddingSetsReport = useCaseBaddingSetStateReport(eventsRepository);
-      const report = beddingSetsReport.report(20)
-      showReport(report);
+      showReport();
     }
 
     return select({
@@ -79,15 +77,13 @@ export async function promptLoop() {
       await useCasePickupAfterCleaningInput();
     }
 
-    const beddingSetsReport = useCaseBaddingSetStateReport(EventsRepository.getInstance());
-    const report = beddingSetsReport.report(20);
-    showReport(report);
+    if(answer === 'startDate-report') {
+      await useCaseStartDateInput()      
+    }
+
+    showReport();
     
     answer = await askCommand();
   }
 }
-
-
-
-
 

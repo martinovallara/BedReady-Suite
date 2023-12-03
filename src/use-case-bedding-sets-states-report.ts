@@ -31,7 +31,7 @@ export class UseCaseBeddingSetsStatesReport {
 
 
     private eventsRepository: EventsRepository;
-    private startDateReport: Date = new Date(0);
+    private startDateReport: DateTime = DateTime.fromJSDate(new Date(0));
 
     constructor(eventsRepository: EventsRepository) {
         this.eventsRepository = eventsRepository;
@@ -52,10 +52,10 @@ export class UseCaseBeddingSetsStatesReport {
         };
 
         const filteredReport = {
-            days: report.days.filter(day => day.date>= this.startDateReport)
+            days: report.days.filter(day => DateTime.fromJSDate(day.date)>= this.startDateReport)
         };
 
-        return filteredReport;
+        return filteredReport; 
     }
 
     beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateZero: DateTime, days: number): BeddingSetsStateOnDate => {
@@ -111,7 +111,7 @@ export class UseCaseBeddingSetsStatesReport {
     };
 
     private reportLengthDays(date_Zero: DateTime, forecastDays: number) {
-        const maxDate = DateTime.max(date_Zero, DateTime.fromJSDate(this.startDateReport));
+        const maxDate = DateTime.max(date_Zero, this.startDateReport);
         const daysLengthFromDateZero = maxDate.diff(date_Zero, 'days').days;
         const reportLengthDays = daysLengthFromDateZero + forecastDays;
         return reportLengthDays;
@@ -130,7 +130,7 @@ export class UseCaseBeddingSetsStatesReport {
             .map(({ name, sets }) => ({ name, sets: sets ?? 0 }));
     }
 
-    setStartDateReport(startDateReport: Date) {
+    setStartDateReport(startDateReport: DateTime) {
         this.startDateReport = startDateReport;
     }
 }

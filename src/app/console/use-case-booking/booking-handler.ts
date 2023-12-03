@@ -1,7 +1,7 @@
 import { input } from "@inquirer/prompts";
 import { DateTime } from "luxon";
 import { Booking } from "../../../use-case-bedding-sets-states-report.js";
-import parseDate from "../../../utils/datetime-parser.js";
+import { parseJSDate } from "../../../utils/datetime-parser.js";
 import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
 
 
@@ -32,8 +32,8 @@ export default async function useCaseBookingInput() {
   });
 
   const bookingInput: Booking = {
-    checkInDate: parseDate(checkInDate),
-    checkOutDate: parseDate(checkOutDate),
+    checkInDate: parseJSDate(checkInDate),
+    checkOutDate: parseJSDate(checkOutDate),
     beddingSets: parseInt(beddingSets),
   };
 

@@ -3,7 +3,7 @@
 import { DateTime } from 'luxon';
 import { input } from '@inquirer/prompts';
 import { Pickup } from '../../../use-case-bedding-sets-states-report.js';
-import parseDate from '../../../utils/datetime-parser.js';
+import { parseJSDate } from '../../../utils/datetime-parser.js';
 import EventsRepostiory from '../../../infrastructure/repositories/events-repository.js';
 
 export default async function useCasePickupAfterCleaningInput() {
@@ -30,7 +30,7 @@ export default async function useCasePickupAfterCleaningInput() {
     })
 
     const pickupAfterCleaningInput: Pickup = {
-        date: parseDate(pickupAfterCleaningDate, "dd/LL/yy"),
+        date: parseJSDate(pickupAfterCleaningDate, "dd/LL/yy"),
         sets: parseInt(pickupAfterCleaning),
     }
 
