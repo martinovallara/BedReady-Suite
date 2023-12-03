@@ -4,7 +4,7 @@ import { BeddingSetsStatesReport, InitialState } from '../src/interfaces/bedding
 import EventsRepository from '../src/infrastructure/repositories/events-repository.js';
 
 
-const date_zero = new Date(0);
+const dateZero = new Date(0);
 const day = 24 * 3600 * 1000;
 const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
@@ -23,7 +23,7 @@ beforeEach(() => {
   eventsRepository = EventsRepository.renew();
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
 
-  eventsRepository.storeInitialState(initialAmountOfBeddingSet(date_zero, amountOfBeddingSet));
+  eventsRepository.storeInitialState(initialAmountOfBeddingSet(dateZero, amountOfBeddingSet));
 })
 
 afterEach(() => {
@@ -38,17 +38,16 @@ describe('beddingSetstatesReport', () => {
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(forecastDays);
     expect(report.days.length).toEqual(forecastDays + 1);
 
-    expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: 9, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 9, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 9, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
+    expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
   });
 
-  type BookingEvents = { sets: number }
   describe('when booking is made with ', () => {
     it.each([
       { sets: 2 },
       { sets: 4 }
-    ])('1 days and $sets bedding sets, should move it to in_use/dirty when check-in/check-out occur', ({ sets }) => {
+    ])('1 days and $sets bedding sets, should move it to inUse/dirty when check-in/check-out occur', ({ sets }) => {
 
       const cleanedExpected = amountOfBeddingSet - sets;
 
@@ -62,17 +61,17 @@ describe('beddingSetstatesReport', () => {
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
-      expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: cleanedExpected, in_use: sets, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: cleanedExpected, in_use: 0, dirty: sets, cleaning: 0, in_laundery: 0 });
-      expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: cleanedExpected, in_use: 0, dirty: sets, cleaning: 0, in_laundery: 0 });
+      expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: cleanedExpected, inUse: sets, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: cleanedExpected, inUse: 0, dirty: sets, cleaning: 0, inLaundery: 0 });
+      expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: cleanedExpected, inUse: 0, dirty: sets, cleaning: 0, inLaundery: 0 });
     });
 
 
     it.each([
       { sets: 2 },
       { sets: 4 }
-    ])('2 days and $sets bedding sets, should move it to in_use/dirty when check-in/check-out occur', ({ sets }) => {
+    ])('2 days and $sets bedding sets, should move it to inUse/dirty when check-in/check-out occur', ({ sets }) => {
       const cleanedExpected = amountOfBeddingSet - sets;
 
       const booking: Booking = {
@@ -86,11 +85,11 @@ describe('beddingSetstatesReport', () => {
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
 
-      expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: cleanedExpected, in_use: sets, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: cleanedExpected, in_use: sets, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: cleanedExpected, in_use: 0, dirty: sets, cleaning: 0, in_laundery: 0 });
-      expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: cleanedExpected, in_use: 0, dirty: sets, cleaning: 0, in_laundery: 0 });
+      expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: cleanedExpected, inUse: sets, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: cleanedExpected, inUse: sets, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: cleanedExpected, inUse: 0, dirty: sets, cleaning: 0, inLaundery: 0 });
+      expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: cleanedExpected, inUse: 0, dirty: sets, cleaning: 0, inLaundery: 0 });
     });
 
     it('2 bookings with 2 days each', () => {
@@ -114,11 +113,11 @@ describe('beddingSetstatesReport', () => {
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
-      expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 7, in_use: 2, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 7, in_use: 2, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: 5, in_use: 2, dirty: 2, cleaning: 0, in_laundery: 0 });
-      expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 5, in_use: 0, dirty: 4, cleaning: 0, in_laundery: 0 });
+      expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 7, inUse: 2, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 7, inUse: 2, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: 5, inUse: 2, dirty: 2, cleaning: 0, inLaundery: 0 });
+      expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 5, inUse: 0, dirty: 4, cleaning: 0, inLaundery: 0 });
     });
 
 
@@ -138,11 +137,11 @@ describe('beddingSetstatesReport', () => {
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
 
-      expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 8, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
-      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 8, in_use: 0, dirty: 0, cleaning: 1, in_laundery: 0 });
-      expect(report.days[9]).toMatchObject({ date: new Date(9 * day), cleaned: 8, in_use: 0, dirty: 0, cleaning: 1, in_laundery: 0 });
-      expect(report.days[10]).toMatchObject({ date: new Date(10 * day), cleaned: 8, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 1 });
+      expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 8, inUse: 1, dirty: 0, cleaning: 0, inLaundery: 0 });
+      expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
+      expect(report.days[9]).toMatchObject({ date: new Date(9 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
+      expect(report.days[10]).toMatchObject({ date: new Date(10 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 1 });
 
     });
   });
@@ -164,7 +163,7 @@ describe('beddingSetstatesReport', () => {
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
-    expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: amountOfBeddingSet, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
+    expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
     expect(report.days[1]).toMatchObject({ date: new Date(1 * day), events: [{ name: 'Check In', sets: 1 }] });
     expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'InCleaning', sets: 1 }] });
     expect(report.days[4]).toMatchObject({ date: new Date(4 * day), events: [{ name: 'Pickup', sets: 1 }] });
@@ -173,19 +172,19 @@ describe('beddingSetstatesReport', () => {
   it('initial state', () => {
     eventsRepository.storeAddBeddingSets({ date: new Date(1 * day), sets: -amountOfBeddingSet }); // reset the initial amount of set
     const initialState: InitialState = {
-      date: date_zero,
+      date: dateZero,
       cleaned: 10,
-      in_use: 9,
+      inUse: 9,
       dirty: 8,
       cleaning: 7,
-      in_laundery: 6
+      inLaundery: 6
     }
 
     eventsRepository.storeInitialState(initialState);
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
 
-    expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: 10, in_use: 9, dirty: 8, cleaning: 7, in_laundery: 6 });
+    expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: 10, inUse: 9, dirty: 8, cleaning: 7, inLaundery: 6 });
   })
 
   it('report rebuild when called more than once', () => {
@@ -201,7 +200,7 @@ describe('beddingSetstatesReport', () => {
     beddingSetsStatesReport.report(2);
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(2);
 
-    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet - 1, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
+    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet - 1, inUse: 1, dirty: 0, cleaning: 0, inLaundery: 0 });
   })
 
   it('report start at date defined in startDateReport', () => {
@@ -217,10 +216,10 @@ function initialAmountOfBeddingSet(date_zero: Date, amountOfBeddingSet: number):
   return {
     date: date_zero,
     cleaned: amountOfBeddingSet,
-    in_use: 0,
+    inUse: 0,
     dirty: 0,
     cleaning: 0,
-    in_laundery: 0
+    inLaundery: 0
   }
 }
 

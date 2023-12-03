@@ -1,3 +1,5 @@
+# Proiezione per aggiornare il ReadModel
+
 Ecco un esempio in TypeScript di come potrebbe essere implementata una proiezione per aggiornare il read model dello stato del set di biancheria per letti in un contesto CQRS e event sourcing:
 
 ```typescript
@@ -48,8 +50,8 @@ Si noti che `Event`, `BookingEvent`, `DropOffToLaundryEvent` e `PickupFromLaundr
 Questo è solo un esempio di come potrebbe essere implementata una proiezione in TypeScript per aggiornare un read model in un contesto CQRS e event sourcing. La struttura esatta dipenderà dalle specifiche esigenze e implementazioni del progetto.
 
 Citations:
-[1] https://stackoverflow.com/questions/19441619/storing-and-updating-read-model-in-a-cqrs-es-system
-[2] https://softwareengineering.stackexchange.com/questions/420495/how-can-we-update-potentially-many-read-model-projections-based-on-an-event-that
-[3] https://radekmaziarka.pl/2018/01/08/cqrs-third-step-simple-read-model/
-[4] https://groups.google.com/g/dddcqrs/c/d7aiKi6ha6g
-[5] https://www.flowing.it/blog/cqrs-e-event-sourcing-il-nostro-primo-progetto-andato-in-produzione-parte-4-implementiamo-un-api/
+[1] <https://stackoverflow.com/questions/19441619/storing-and-updating-read-model-in-a-cqrs-es-system>
+[2] <https://softwareengineering.stackexchange.com/questions/420495/how-can-we-update-potentially-many-read-model-projections-based-on-an-event-that>
+[3] <https://radekmaziarka.pl/2018/01/08/cqrs-third-step-simple-read-model/>
+[4] <https://groups.google.com/g/dddcqrs/c/d7aiKi6ha6g>
+[5] <https://www.flowing.it/blog/cqrs-e-event-sourcing-il-nostro-primo-progetto-andato-in-produzione-parte-4-implementiamo-un-api/>

@@ -1,3 +1,6 @@
+
+# Struttura per un progetto TypeScript
+
 Ecco un esempio di struttura per un progetto TypeScript che segue il paradigma DDD (Domain-Driven Design) e event sourcing, con un read model:
 
 ```typescript

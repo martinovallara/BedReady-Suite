@@ -31,7 +31,7 @@ describe('EventsRepository', () => {
         }
         eventsRepository.storeBookingConfirmed(booking);
         eventsRepository.storeAddBeddingSets({ date: new Date(2023, 12 - 1, 1), sets: 10});
-        eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1) ,cleaned: 9, in_use: 8, dirty: 7, cleaning: 6, in_laundery: 1 });
+        eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1) ,cleaned: 9, inUse: 8, dirty: 7, cleaning: 6, inLaundery: 1 });
         eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2023, 12 - 1, 1), sets: 2, cleaningTime: 10 });
         eventsRepository.storeOnPickupLaundry({ date: new Date(2023, 12 - 1, 1), sets: 2 });
 

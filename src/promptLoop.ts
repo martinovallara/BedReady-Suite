@@ -10,7 +10,7 @@ import EventsRepository from './infrastructure/repositories/events-repository.js
 
 export async function promptLoop() {
 
-  type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' |'exit';
+  type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' | 'startDate-report'|'exit';
   function askCommand(): Promise<Command> {
     
     
@@ -44,6 +44,12 @@ export async function promptLoop() {
           value: 'store-pickupAfterCleaning',
           description: 'registra il ritiro dei sets matrimoniali puliti.',
         },
+        // create select item for enter the date of start report
+        {
+          name: 'data inizio report',
+          value: 'startDate-report',
+          description: 'visualizza report',
+        } ,
         new Separator(),
         {
           name: 'exit',
@@ -59,7 +65,7 @@ export async function promptLoop() {
   while (answer !== 'exit') {
     if (answer === 'store-initBeddingSets') {
       await useCaseInitBeddingSets();
-    };
+    }
 
     if (answer === 'store-inCleaning') {
       await useCaseInCleaningInput();
@@ -67,7 +73,7 @@ export async function promptLoop() {
 
     if (answer === 'store-booking') {
       await useCaseBookingInput();
-    };
+    }
 
     if (answer === 'store-pickupAfterCleaning') {
       await useCasePickupAfterCleaningInput();

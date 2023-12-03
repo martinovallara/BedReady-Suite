@@ -12,10 +12,10 @@ export default function showReport(report: BeddingSetsStatesReport )  {
           return `${event.name} (${event.sets})`;
         }).toString(),
         day.cleaned >= 0 ? chalk['greenBright']('■'.repeat(day.cleaned)) : chalk['redBright']('X'.repeat(-day.cleaned)),
-        chalk['yellow']('■'.repeat(day.in_use)),
+        chalk['yellow']('■'.repeat(day.inUse)),
         chalk['redBright']('■'.repeat(day.dirty)),
         chalk['magenta']('■'.repeat(day.cleaning)),
-        chalk['green']('■'.repeat(day.in_laundery))
+        chalk['green']('■'.repeat(day.inLaundery))
       ]
     })
   

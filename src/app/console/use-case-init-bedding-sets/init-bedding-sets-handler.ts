@@ -28,7 +28,7 @@ export default async function useCaseInitBeddingSets() {
     },
   })
 
-  const in_use = await input({
+  const inUse = await input({
     message: "in uso",
     default: "0",
     validate: (input) => {
@@ -64,7 +64,7 @@ export default async function useCaseInitBeddingSets() {
     }
   })
 
-  const in_laundery = await input({
+  const inLaundery = await input({
     message: "in lavanderia",
     default: "0",
     validate: (input) => {
@@ -79,10 +79,10 @@ export default async function useCaseInitBeddingSets() {
   const state: InitialState = {
     date: parseDate(dateZero),
     cleaned: parseInt(cleaned),
-    in_use: parseInt(in_use),
+    inUse: parseInt(inUse),
     dirty: parseInt(dirty),
     cleaning: parseInt(cleaning),
-    in_laundery: parseInt(in_laundery)
+    inLaundery: parseInt(inLaundery)
   }
 
   eventsRepository.storeInitialState(state);

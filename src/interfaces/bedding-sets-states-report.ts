@@ -20,9 +20,9 @@ export type InitialState = BeddingSetsState & {
 
 export type BeddingSetsState = {
   cleaned: number;
-  in_use: number;
+  inUse: number;
   dirty: number;
   cleaning: number;
-  in_laundery: number;
+  inLaundery: number;
 };
 

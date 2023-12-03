@@ -5,11 +5,10 @@ import fs from 'fs';
 
 
 export default class EventsRepository {
-    dateTimeZero(): Date {
-        return this.initialState?.date as Date
+    dateZero(): DateTime {
+        return DateTime.fromJSDate(this.initialState?.date as Date)
     }
     getEvents(): boolean {
-        // return true if some array is not empty
         return this.additionBeddingSets.length > 0 || this.bookingsConfirmed.length > 0 || this.cleaningDepots.length > 0 || this.pickups.length > 0 || this.initialState !== undefined
     }
 
@@ -65,11 +64,11 @@ export default class EventsRepository {
     storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
         this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
-    };
+    }
     storeOnPickupLaundry(pickup: Pickup) {
         this.pickups.push(pickup);
         this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
-    };
+    }
 
     storeInitialState: (initialState: InitialState) => void = (initialState: InitialState) => {
         this.initialState = initialState;
@@ -155,5 +154,5 @@ export default class EventsRepository {
             ...initialState,
             date: new Date(initialState.date)
         } as InitialState;
-    };
+    }
 }

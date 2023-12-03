@@ -40,17 +40,14 @@ export class UseCaseBeddingSetsStatesReport {
     report(forecastDays: number): BeddingSetsStatesReport {
         const beddingSets = new BeddingSetsReadModel();
 
-        const date_time_zero = DateTime.fromJSDate(this.eventsRepository.dateTimeZero());
+        const initialStateDate = this.eventsRepository.dateZero();
         beddingSets.setup(this.eventsRepository.initialState)
 
-        // max date btween date_time_zero and startDateReport
-        const maxDate = DateTime.max(date_time_zero, DateTime.fromJSDate(this.startDateReport));
-        const daysLengthFromDateZero= maxDate.diff(date_time_zero, 'days').days
-        const reportLengthDays = daysLengthFromDateZero + forecastDays;
+        const reportLengthDays = this.reportLengthDays(initialStateDate, forecastDays);
 
         const report: BeddingSetsStatesReport = {
             days: Array.from({ length: reportLengthDays+ 1  }, (_, index) => {
-                return this.beddingSetsStatus(beddingSets, date_time_zero, index);
+                return this.beddingSetsStatus(beddingSets, initialStateDate, index);
             })
         };
 
@@ -59,20 +56,20 @@ export class UseCaseBeddingSetsStatesReport {
         };
 
         return filteredReport;
-    };
+    }
 
-    beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateTimeZero: DateTime, days: number): BeddingSetsStateOnDate => {
-        const current_date = dateTimeZero.plus({ days: days });
+    beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateZero: DateTime, days: number): BeddingSetsStateOnDate => {
+        const currentDate = dateZero.plus({ days: days });
 
-        const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(current_date);
+        const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(currentDate);
 
-        const checkInBooking = this.eventsRepository.findCheckInBookingEvents(current_date);
-        const checkOutBooking = this.eventsRepository.findCheckOutBookingEvents(current_date);
+        const checkInBooking = this.eventsRepository.findCheckInBookingEvents(currentDate);
+        const checkOutBooking = this.eventsRepository.findCheckOutBookingEvents(currentDate);
 
-        const InCleaning = this.eventsRepository.findCleaningDepotsEvents(current_date);
-        const onFinishCleaning = this.eventsRepository.findFinishCleaningEvents(current_date);
+        const InCleaning = this.eventsRepository.findCleaningDepotsEvents(currentDate);
+        const onFinishCleaning = this.eventsRepository.findFinishCleaningEvents(currentDate);
 
-        const pickup = this.eventsRepository.findPickupEvents(current_date);
+        const pickup = this.eventsRepository.findPickupEvents(currentDate);
 
         if (onAddBeddingSets.length > 0) {
             onAddBeddingSets.forEach(addition => {
@@ -100,18 +97,25 @@ export class UseCaseBeddingSetsStatesReport {
             beddingSets.onPickupLaundry(pickup[0].sets);
         }
 
-        const { cleaned, in_use, dirty, cleaning, in_laundery } = beddingSets as BeddingSetsState;
+        const { cleaned, inUse, dirty, cleaning, inLaundery } = beddingSets as BeddingSetsState;
 
         return {
-            date: current_date.toJSDate(),
+            date: currentDate.toJSDate(),
             events: this.getEvents(checkInBooking[0], checkOutBooking[0], InCleaning[0], pickup[0]),
             cleaned,
-            in_use,
+            inUse: inUse,
             dirty,
             cleaning,
-            in_laundery
+            inLaundery: inLaundery
         };
     };
+
+    private reportLengthDays(date_Zero: DateTime, forecastDays: number) {
+        const maxDate = DateTime.max(date_Zero, DateTime.fromJSDate(this.startDateReport));
+        const daysLengthFromDateZero = maxDate.diff(date_Zero, 'days').days;
+        const reportLengthDays = daysLengthFromDateZero + forecastDays;
+        return reportLengthDays;
+    }
 
     getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning, pickup?: Pickup): Event[] {
         const eventMappings: { condition: Booking | InCleaning | Pickup | undefined, name: EventName, sets: number | undefined }[] = [
