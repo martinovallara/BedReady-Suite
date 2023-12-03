@@ -22,7 +22,7 @@ jest.mock('fs', () => ({
 beforeEach(() => {
   eventsRepository = EventsRepository.renew();
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
-  
+
   eventsRepository.storeInitialState(initialAmountOfBeddingSet(date_zero, amountOfBeddingSet));
 })
 
@@ -34,8 +34,9 @@ afterEach(() => {
 describe('beddingSetstatesReport', () => {
   it('should return all bedding sets cleaned at begin of process', () => {
 
-    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
-    expect(report.days.length).toEqual(6);
+    const forecastDays = 5;
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(forecastDays);
+    expect(report.days.length).toEqual(forecastDays + 1);
 
     expect(report.days[0]).toMatchObject({ date: date_zero, cleaned: 9, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
     expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 9, in_use: 0, dirty: 0, cleaning: 0, in_laundery: 0 });
@@ -178,7 +179,7 @@ describe('beddingSetstatesReport', () => {
       dirty: 8,
       cleaning: 7,
       in_laundery: 6
-    } 
+    }
 
     eventsRepository.storeInitialState(initialState);
 
@@ -200,14 +201,15 @@ describe('beddingSetstatesReport', () => {
     beddingSetsStatesReport.report(2);
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(2);
 
-    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet-1, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
+    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: amountOfBeddingSet - 1, in_use: 1, dirty: 0, cleaning: 0, in_laundery: 0 });
   })
 
   it('report start at date defined in startDateReport', () => {
     beddingSetsStatesReport.setStartDateReport(new Date(10 * day));
-    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
-    expect(report.days.length).toEqual(11);
-    expect(report.days[0]).toMatchObject({ date: new Date(10 * day)});
+    const forecastDays = 10;
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(forecastDays);
+    expect(report.days.length).toEqual(forecastDays + 1);
+    expect(report.days[0]).toMatchObject({ date: new Date(10 * day) });
   })
 })
 
@@ -220,6 +222,6 @@ function initialAmountOfBeddingSet(date_zero: Date, amountOfBeddingSet: number):
     cleaning: 0,
     in_laundery: 0
   }
-} 
+}
 
 
