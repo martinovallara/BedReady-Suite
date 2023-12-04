@@ -1,8 +1,9 @@
-import chalk from "chalk";
+import chalk, { Chalk } from "chalk";
 import { DateTime } from "luxon";
 import Table from 'cli-table3';
 import useCaseBaddingSetStateReport from "../../../use-case-bedding-sets-states-report.js";
 import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
+import { EventName } from "../../../interfaces/bedding-sets-states-report.js";
 
 export default function showReport() {
   const eventsRepository = EventsRepository.getInstance();
@@ -13,13 +14,13 @@ export default function showReport() {
     return [
       DateTime.fromJSDate(day.date).setLocale('it').toFormat('ccc dd LLL yyyy'),
       day.events.map((event) => {
-        return `${event.name} (${event.sets})`;
-      }).toString(),
-      day.cleaned >= 0 ? chalk['greenBright']('■'.repeat(day.cleaned)) : chalk['redBright']('X'.repeat(-day.cleaned)),
-      chalk['yellow']('■'.repeat(day.inUse)),
-      chalk['redBright']('■'.repeat(day.dirty)),
-      chalk['magenta']('■'.repeat(day.cleaning)),
-      chalk['green']('■'.repeat(day.inLaundery))
+        return `${getItEvent(event.name)} (${event.sets})`;
+      }).join(',\n '),
+      day.cleaned >= 0 ? positiveBeddingSetFormat(day.cleaned, chalk.greenBright) : negativeBeddingSetFormat(day.cleaned, chalk.redBright),
+      day.inUse >= 0 ? positiveBeddingSetFormat(day.inUse, chalk.yellow) : negativeBeddingSetFormat(day.inUse, chalk.redBright),
+      day.dirty >= 0 ? positiveBeddingSetFormat(day.dirty, chalk.redBright) : negativeBeddingSetFormat(day.dirty, chalk.redBright),
+      day.cleaning >= 0 ? positiveBeddingSetFormat(day.cleaning, chalk.magenta) : negativeBeddingSetFormat(day.cleaning, chalk.redBright),
+      day.inLaundery >= 0 ? positiveBeddingSetFormat(day.inLaundery, chalk.green) : negativeBeddingSetFormat(day.inLaundery, chalk.redBright),
     ]
   })
 
@@ -38,4 +39,48 @@ export default function showReport() {
   });
 
   console.log(tableBeddingSets.toString());
+}
+
+export function positiveBeddingSetFormat(items: number, chalkProperty: Chalk): string | undefined {
+  return chalkProperty('■'.repeat(items)) + "(" + items + ")";
+}
+
+
+function negativeBeddingSetFormat(items: number, chalkProperty: Chalk): string {
+  return chalkProperty('X'.repeat(-items));
+}
+
+function getItEvent(eventName: EventName) {
+  // convert event name to italian evente name whit mapping
+
+  type eventMapping = {
+    name: EventName,
+    it: string
+  }
+
+  const eventMapping: eventMapping[] = [
+    {
+      name: 'Check In',
+      it: 'check in'
+    },
+    {
+      name: 'Check Out',
+      it: 'check out'
+    },
+    {
+      name: 'In Cleaning',
+      it: 'in pulizia'
+    },
+    {
+      name: 'Finish Cleaning',
+      it: 'fine pulizia'
+    },
+    {
+      name: 'Pickup',
+      it: 'ritiro'
+    }
+  ]
+
+  return eventMapping.find((event) => event.name === eventName)?.it;
+
 }

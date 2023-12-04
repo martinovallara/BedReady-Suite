@@ -101,7 +101,7 @@ export class UseCaseBeddingSetsStatesReport {
 
         return {
             date: currentDate.toJSDate(),
-            events: this.getEvents(checkInBooking[0], checkOutBooking[0], InCleaning[0], pickup[0]),
+            events: this.getEvents(checkInBooking[0], checkOutBooking[0], InCleaning[0], onFinishCleaning[0], pickup[0]),
             cleaned,
             inUse: inUse,
             dirty,
@@ -117,11 +117,12 @@ export class UseCaseBeddingSetsStatesReport {
         return reportLengthDays;
     }
 
-    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning, pickup?: Pickup): Event[] {
+    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning,OnFinishiCleaning?: InCleaning, pickup?: Pickup): Event[] {
         const eventMappings: { condition: Booking | InCleaning | Pickup | undefined, name: EventName, sets: number | undefined }[] = [
             { condition: checkInBooking, name: 'Check In' as EventName, sets: checkInBooking?.beddingSets },
             { condition: checkOutBooking, name: 'Check Out' as EventName, sets: checkOutBooking?.beddingSets },
-            { condition: InCleaning, name: 'InCleaning' as EventName, sets: InCleaning?.sets },
+            { condition: InCleaning, name: 'In Cleaning' as EventName, sets: InCleaning?.sets },
+            { condition: OnFinishiCleaning, name: 'Finish Cleaning' as EventName, sets: OnFinishiCleaning?.sets },
             { condition: pickup, name: 'Pickup' as EventName, sets: pickup?.sets }
         ];
 

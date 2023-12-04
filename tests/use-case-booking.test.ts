@@ -160,14 +160,15 @@ describe('beddingSetstatesReport', () => {
     eventsRepository.storeBookingConfirmed(bookings[0]);
 
     eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-    eventsRepository.storeOnPickupLaundry({ date: new Date(4 * day), sets: 1 });
+    eventsRepository.storeOnPickupLaundry({ date: new Date(5 * day), sets: 1 });
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
     expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
     expect(report.days[1]).toMatchObject({ date: new Date(1 * day), events: [{ name: 'Check In', sets: 1 }] });
-    expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'InCleaning', sets: 1 }] });
-    expect(report.days[4]).toMatchObject({ date: new Date(4 * day), events: [{ name: 'Pickup', sets: 1 }] });
+    expect(report.days[2]).toMatchObject({ date: new Date(2 * day), events: [{ name: 'Check Out', sets: 1 }, { name: 'In Cleaning', sets: 1 }] });
+    expect(report.days[4]).toMatchObject({ date: new Date(4 * day), events: [{ name: 'Finish Cleaning', sets: 1 }] });
+    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), events: [{ name: 'Pickup', sets: 1 }] });
   });
 
   it('initial state', () => {
