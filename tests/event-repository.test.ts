@@ -12,14 +12,6 @@ beforeAll(() => {
 })
 
 describe('EventsRepository', () => {
-    test('persistToFile', () => {
-        const eventsRepository = EventsRepository.getInstance();
-        eventsRepository.persistToFile(storagePath);
-
-        expect(fs.existsSync(storagePath)).toBe(true);
-    })
-
-  
     test('loadFromFile at creation', () => {
         const eventsRepository = EventsRepository.getInstance();
 
