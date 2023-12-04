@@ -1,6 +1,6 @@
 {
   "name": "@martinovallara/bedready-suite",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": " to arrange with the laundry service to have a consistently available set for the beds in my bed and breakfast.",
   "main": "dist/index.js",
   "type": "module",
