@@ -19,6 +19,7 @@ describe('EventsRepository', () => {
         expect(fs.existsSync(storagePath)).toBe(true);
     })
 
+  
     test('loadFromFile at creation', () => {
         const eventsRepository = EventsRepository.getInstance();
 
@@ -50,7 +51,5 @@ describe('EventsRepository', () => {
         expect(eventsRepositoryReloaded.initialState).toStrictEqual(eventsRepository.initialState);
         expect(eventsRepositoryReloaded.cleaningDepots).toStrictEqual(eventsRepository.cleaningDepots);
         expect(eventsRepositoryReloaded.pickups).toStrictEqual(eventsRepository.pickups);
-
     })
-
 })
