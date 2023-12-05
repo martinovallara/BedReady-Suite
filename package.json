@@ -1,6 +1,6 @@
 {
   "name": "@martinovallara/bedready-suite",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": " to arrange with the laundry service to have a consistently available set for the beds in my bed and breakfast.",
   "main": "dist/index.js",
   "type": "module",
@@ -12,7 +12,8 @@
     "build": "tsc ",
     "build:watch": "tsc --watch",
     "start": "node dist/index.js",
-    "build-start": "npm run build && node dist/index.js"
+    "build-start": "npm run build && node dist/index.js",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
