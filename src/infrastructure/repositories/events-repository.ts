@@ -23,8 +23,6 @@ export default class EventsRepository {
     static instance: EventsRepository | null;
     static getInstance(): EventsRepository {
 
-        //console.log('EventsRepository --> EVENTS_STORAGE_PATH:', EventsRepository.EVENTS_STORAGE_PATH());
-
         if (!EventsRepository.instance) {
             EventsRepository.instance = new EventsRepository();
             // deserialize from file if exists
