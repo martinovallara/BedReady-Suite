@@ -27,7 +27,10 @@ describe('EventsRepository', () => {
         eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1) ,cleaned: 9, inUse: 8, dirty: 7, cleaning: 6, inLaundery: 1 });
         eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2023, 12 - 1, 1), sets: 2, cleaningTime: 10 });
         eventsRepository.storeOnPickupLaundry({ date: new Date(2023, 12 - 1, 1), sets: 2 });
+        const expectedStartReportDate = { date:new Date(2023, 12 - 1, 11),};
+        eventsRepository.storeStartDateReport(expectedStartReportDate);
 
+        expect(eventsRepository.startDateReport).toStrictEqual(expectedStartReportDate);
         const eventsRepositoryReloaded = EventsRepository.renew();
 
         expect(eventsRepositoryReloaded.bookingsConfirmed.length).toBe(1);
@@ -43,5 +46,6 @@ describe('EventsRepository', () => {
         expect(eventsRepositoryReloaded.initialState).toStrictEqual(eventsRepository.initialState);
         expect(eventsRepositoryReloaded.cleaningDepots).toStrictEqual(eventsRepository.cleaningDepots);
         expect(eventsRepositoryReloaded.pickups).toStrictEqual(eventsRepository.pickups);
+        expect(eventsRepositoryReloaded.startDateReport).toStrictEqual(eventsRepository.startDateReport);
     })
 })

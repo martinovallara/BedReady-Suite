@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import useCaseBaddingSetStateReport from "../../../use-case-bedding-sets-states-report.js";
-import { parseLxDate } from "../../../utils/datetime-parser.js";
+import { parseJSDate } from "../../../utils/datetime-parser.js";
 import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
 import { input } from "@inquirer/prompts";
 
@@ -14,6 +14,6 @@ export default async function useCaseStartDateInput() {
       },
     });
 
-    useCaseBaddingSetStateReport(EventsRepository.getInstance()).setStartDateReport(parseLxDate(startDate, "dd/LL/yy"));
+    useCaseBaddingSetStateReport(EventsRepository.getInstance()).setStartDateReport(parseJSDate(startDate, "dd/LL/yy"));
   }
   

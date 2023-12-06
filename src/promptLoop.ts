@@ -10,10 +10,8 @@ import useCaseStartDateInput from './app/console/use-case-start-date-report/star
 
 export async function promptLoop() {
 
-  type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' | 'startDate-report'|'exit';
-  function askCommand(): Promise<Command> {
-    
-    
+  type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' | 'startDate-report' | 'exit';
+  const askCommand = (): Promise<Command> => {
     const eventsRepository = EventsRepository.getInstance();
     if (eventsRepository.getEvents()) {
       showReport();
@@ -47,7 +45,7 @@ export async function promptLoop() {
           name: 'data inizio report',
           value: 'startDate-report',
           description: 'visualizza report',
-        } ,
+        },
         new Separator(),
         {
           name: 'exit',
@@ -77,12 +75,12 @@ export async function promptLoop() {
       await useCasePickupAfterCleaningInput();
     }
 
-    if(answer === 'startDate-report') {
-      await useCaseStartDateInput()      
+    if (answer === 'startDate-report') {
+      await useCaseStartDateInput()
     }
 
     showReport();
-    
+
     answer = await askCommand();
   }
 }

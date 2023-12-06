@@ -3,46 +3,51 @@ import { InitialState } from "../../interfaces/bedding-sets-states-report.js";
 import { AdditionBeddingSets, Booking, InCleaning, Pickup } from "../../use-case-bedding-sets-states-report.js";
 import fs from 'fs';
 
+type StartDateReport = {
+    date: Date;
+};
 
 export default class EventsRepository {
+    startDateReport:StartDateReport = { date: new Date(0)};
+
     dateZero(): DateTime {
         return DateTime.fromJSDate(this.initialState?.date as Date)
     }
     getEvents(): boolean {
         return this.additionBeddingSets.length > 0 || this.bookingsConfirmed.length > 0 || this.cleaningDepots.length > 0 || this.pickups.length > 0 || this.initialState !== undefined
     }
-
+    
     additionBeddingSets: AdditionBeddingSets[]
     bookingsConfirmed: Booking[];
     cleaningDepots: InCleaning[];
     pickups: Pickup[];
     initialState: InitialState | undefined
-
+    
     static EVENTS_STORAGE_PATH: () => string = () => process.env.EVENTS_STORAGE_PATH as string
-
+    
     static instance: EventsRepository | null;
     static getInstance(): EventsRepository {
-
+        
         if (!EventsRepository.instance) {
             EventsRepository.instance = new EventsRepository();
             // deserialize from file if exists
             if (fs.existsSync(EventsRepository.EVENTS_STORAGE_PATH())) {
                 const jsonData = fs.readFileSync(EventsRepository.EVENTS_STORAGE_PATH(), 'utf8');
                 const data = JSON.parse(jsonData) as EventsRepository;
-
+                
                 EventsRepository.deserialize(EventsRepository.instance, data);
-
+                
             }
         }
         return EventsRepository.instance;
     }
-
-
+    
+    
     static renew() {
         EventsRepository.instance = null;
         return EventsRepository.getInstance();
     }
-
+    
     private constructor() {
         this.additionBeddingSets = [];
         this.bookingsConfirmed = [];
@@ -73,6 +78,11 @@ export default class EventsRepository {
         this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
     }
 
+    storeStartDateReport(dateStartReport: { date: Date; }) {
+        this.startDateReport = dateStartReport;
+        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+    }
+
     findAddBeddingSetsEvents(current_date: DateTime): AdditionBeddingSets[] {
         return this.additionBeddingSets.filter(addition => this.onAddBeddingSets(addition, current_date));
     }
@@ -95,6 +105,10 @@ export default class EventsRepository {
 
     findPickupEvents(current_date: DateTime): Pickup[] {
         return this.pickups.filter(pickup => DateTime.fromJSDate(pickup.date).toMillis() === current_date.toMillis());
+    }
+
+    getStartDateReport(): DateTime {
+        return DateTime.fromJSDate(this.startDateReport.date);
     }
 
     private onAddBeddingSets(addition: AdditionBeddingSets, current_date: DateTime): unknown {
@@ -146,6 +160,11 @@ export default class EventsRepository {
                 date: new Date(pickup.date)
             } as Pickup;
         });
+
+        const startDateReport = data["startDateReport"] as StartDateReport;
+        instance.startDateReport = {
+            date: startDateReport?.date ? new Date(startDateReport.date): new Date(0) 
+        }
 
         const initialState = data["initialState"] as InitialState;
         instance.initialState = {

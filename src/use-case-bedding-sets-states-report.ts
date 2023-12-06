@@ -1,9 +1,7 @@
 import { DateTime } from "luxon"
-
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, BeddingSetsState, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
 import EventsRepository from "./infrastructure/repositories/events-repository.js";
-
 
 export type Booking = {
     checkInDate: Date;
@@ -28,10 +26,7 @@ export type AdditionBeddingSets = {
 }
 
 export class UseCaseBeddingSetsStatesReport {
-
-
     private eventsRepository: EventsRepository;
-    private startDateReport: DateTime = DateTime.fromJSDate(new Date(0));
 
     constructor(eventsRepository: EventsRepository) {
         this.eventsRepository = eventsRepository;
@@ -46,16 +41,14 @@ export class UseCaseBeddingSetsStatesReport {
         const reportLengthDays = this.reportLengthDays(initialStateDate, forecastDays);
 
         const report: BeddingSetsStatesReport = {
-            days: Array.from({ length: reportLengthDays+ 1  }, (_, index) => {
+            days: Array.from({ length: reportLengthDays + 1 }, (_, index) => {
                 return this.beddingSetsStatus(beddingSets, initialStateDate, index);
             })
         };
 
-        const filteredReport = {
-            days: report.days.filter(day => DateTime.fromJSDate(day.date)>= this.startDateReport)
+        return {
+            days: report.days.filter(day => DateTime.fromJSDate(day.date) >= this.eventsRepository.getStartDateReport())
         };
-
-        return filteredReport; 
     }
 
     beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateZero: DateTime, days: number): BeddingSetsStateOnDate => {
@@ -111,13 +104,12 @@ export class UseCaseBeddingSetsStatesReport {
     };
 
     private reportLengthDays(date_Zero: DateTime, forecastDays: number) {
-        const maxDate = DateTime.max(date_Zero, this.startDateReport);
+        const maxDate = DateTime.max(date_Zero, this.eventsRepository.getStartDateReport());
         const daysLengthFromDateZero = maxDate.diff(date_Zero, 'days').days;
-        const reportLengthDays = daysLengthFromDateZero + forecastDays;
-        return reportLengthDays;
+        return daysLengthFromDateZero + forecastDays;
     }
 
-    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning,OnFinishiCleaning?: InCleaning, pickup?: Pickup): Event[] {
+    getEvents(checkInBooking?: Booking, checkOutBooking?: Booking, InCleaning?: InCleaning, OnFinishiCleaning?: InCleaning, pickup?: Pickup): Event[] {
         const eventMappings: { condition: Booking | InCleaning | Pickup | undefined, name: EventName, sets: number | undefined }[] = [
             { condition: checkInBooking, name: 'Check In' as EventName, sets: checkInBooking?.beddingSets },
             { condition: checkOutBooking, name: 'Check Out' as EventName, sets: checkOutBooking?.beddingSets },
@@ -131,8 +123,8 @@ export class UseCaseBeddingSetsStatesReport {
             .map(({ name, sets }) => ({ name, sets: sets ?? 0 }));
     }
 
-    setStartDateReport(startDateReport: DateTime) {
-        this.startDateReport = startDateReport;
+    setStartDateReport(startDateReport: Date) {
+        this.eventsRepository.storeStartDateReport({ date: startDateReport });
     }
 }
 

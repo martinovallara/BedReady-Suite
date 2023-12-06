@@ -2,16 +2,12 @@ import { describe, expect } from '@jest/globals';
 import useCaseBeddingSetsStatesReport, { UseCaseBeddingSetsStatesReport, Booking } from '../src/use-case-bedding-sets-states-report';
 import { BeddingSetsStatesReport, InitialState } from '../src/interfaces/bedding-sets-states-report';
 import EventsRepository from '../src/infrastructure/repositories/events-repository.js';
-import { DateTime } from 'luxon';
-
 
 const dateZero = new Date(0);
 const day = 24 * 3600 * 1000;
 const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 let eventsRepository: EventsRepository;
-
-
 
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
@@ -206,7 +202,7 @@ describe('beddingSetstatesReport', () => {
   })
 
   it('report start at date defined in startDateReport', () => {
-    beddingSetsStatesReport.setStartDateReport(DateTime.fromJSDate(new Date(10 * day)));
+    beddingSetsStatesReport.setStartDateReport(new Date(10 * day));
     const forecastDays = 10;
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(forecastDays);
     expect(report.days.length).toEqual(forecastDays + 1);
