@@ -21,12 +21,13 @@ export default function showReport() {
       day.dirty >= 0 ? positiveBeddingSetFormat(day.dirty, chalk.redBright) : negativeBeddingSetFormat(day.dirty, chalk.redBright),
       day.cleaning >= 0 ? positiveBeddingSetFormat(day.cleaning, chalk.magenta) : negativeBeddingSetFormat(day.cleaning, chalk.redBright),
       day.inLaundery >= 0 ? positiveBeddingSetFormat(day.inLaundery, chalk.green) : negativeBeddingSetFormat(day.inLaundery, chalk.redBright),
+      day.cleaned + day.inUse + day.dirty + day.cleaning + day.inLaundery
     ]
   })
 
 
   const tableBeddingSets = new Table({
-    head: ['data', 'eventi', 'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia'],
+    head: ['data', 'eventi', 'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia', 'sets'],
     style: { 'padding-left': 1, 'padding-right': 1 } // Add style property
   });
 

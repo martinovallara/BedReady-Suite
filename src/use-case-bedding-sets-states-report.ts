@@ -88,6 +88,12 @@ export class UseCaseBeddingSetsStatesReport {
 
         if (pickup.length >= 1) {
             beddingSets.onPickupLaundry(pickup[0].sets);
+            if (beddingSets.inLaundery < 0) {
+                beddingSets.inLaundery = 0
+                this.eventsRepository.cleaningDepots.filter(event => event.date.getMilliseconds() > currentDate.toJSDate().getMilliseconds()).forEach((event) => {
+                    event.sets -= pickup[0].sets
+                })
+            }
         }
 
         const { cleaned, inUse, dirty, cleaning, inLaundery } = beddingSets as BeddingSetsState;

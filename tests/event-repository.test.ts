@@ -1,14 +1,27 @@
 import EventsRepository from '../src/infrastructure/repositories/events-repository.js';
-import fs from 'fs';
 import { Booking } from '../src/use-case-bedding-sets-states-report.js';
 import { DateTime } from 'luxon';
 
 const storagePath: string = process.env.EVENTS_STORAGE_PATH as string;
 
+// mock fs module: reads what he wrote.
+let mockFileContent: string | undefined = undefined;
+jest.mock('fs', () => {
+    
+    return {
+        readFileSync: jest.fn(() => mockFileContent),
+        writeFileSync: jest.fn((_path, data) => {
+            mockFileContent = data;
+        }),
+        existsSync: jest.fn(() => {
+            return mockFileContent
+        }),
+        unlinkSync: jest.fn()
+    };
+});
+
 beforeAll(() => {
-    if (fs.existsSync(storagePath)) {
-        fs.unlinkSync(storagePath);
-    }
+    mockFileContent = undefined;
 })
 
 describe('EventsRepository', () => {
@@ -23,11 +36,11 @@ describe('EventsRepository', () => {
             beddingSets: 2
         }
         eventsRepository.storeBookingConfirmed(booking);
-        eventsRepository.storeAddBeddingSets({ date: new Date(2023, 12 - 1, 1), sets: 10});
-        eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1) ,cleaned: 9, inUse: 8, dirty: 7, cleaning: 6, inLaundery: 1 });
+        eventsRepository.storeAddBeddingSets({ date: new Date(2023, 12 - 1, 1), sets: 10 });
+        eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1), cleaned: 9, inUse: 8, dirty: 7, cleaning: 6, inLaundery: 1 });
         eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2023, 12 - 1, 1), sets: 2, cleaningTime: 10 });
         eventsRepository.storeOnPickupLaundry({ date: new Date(2023, 12 - 1, 1), sets: 2 });
-        const expectedStartReportDate = { date:new Date(2023, 12 - 1, 11),};
+        const expectedStartReportDate = { date: new Date(2023, 12 - 1, 11), };
         eventsRepository.storeStartDateReport(expectedStartReportDate);
 
         expect(eventsRepository.startDateReport).toStrictEqual(expectedStartReportDate);

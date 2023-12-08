@@ -61,26 +61,41 @@ describe('BeddingSets', () => {
     })
 
 
-    test('onPickupLaundry remove sets from laundery and add to clean', () => {
+    test('onPickupLaundry remove sets from laundery and add to clean when inLaundery is positive', () => {
         const beddingSets = new BeddingSets();
+        beddingSets.inLaundery = 1;
+
         beddingSets.onPickupLaundry(1);
         expect(beddingSets.cleaned).toBe(1);
         expect(beddingSets.inUse).toBe(0);
         expect(beddingSets.dirty).toBe(0);
         expect(beddingSets.cleaning).toBe(0);
-        expect(beddingSets.inLaundery).toBe(-1);
+        expect(beddingSets.inLaundery).toBe(0);
     })
+
+    test('onPickupLaundry remove sets from laundery and from cleaning when inLaundery is less sets pickuped', () => {
+        const beddingSets = new BeddingSets();
+        beddingSets.inLaundery = 0;
+
+        beddingSets.onPickupLaundry(1);
+        expect(beddingSets.cleaned).toBe(1);
+        expect(beddingSets.inUse).toBe(0);
+        expect(beddingSets.dirty).toBe(0);
+        expect(beddingSets.cleaning).toBe(-1);
+        expect(beddingSets.inLaundery).toBe(0);
+    })
+
 
     test('setup bedding sets states', () => {
         const beddingSets = new BeddingSets();
-        const dataSetup: BeddingSetsState= {
+        const dataSetup: BeddingSetsState = {
             cleaned: 1,
             inUse: 2,
             dirty: 3,
             cleaning: 4,
             inLaundery: 5
         }
-        beddingSets.setup(dataSetup);        
+        beddingSets.setup(dataSetup);
         expect(beddingSets.cleaned).toBe(1);
         expect(beddingSets.inUse).toBe(2);
         expect(beddingSets.dirty).toBe(3);
@@ -88,5 +103,5 @@ describe('BeddingSets', () => {
         expect(beddingSets.inLaundery).toBe(5);
     })
 
-    
+
 })

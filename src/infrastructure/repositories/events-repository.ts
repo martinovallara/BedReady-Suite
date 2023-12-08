@@ -128,7 +128,7 @@ export default class EventsRepository {
 
     public persistToFile(filename: string): void {
         const data = JSON.stringify(this);
-        fs.writeFileSync(filename, data);
+        fs.writeFileSync(filename, data, 'utf8');
     }
 
     private static deserialize(instance: EventsRepository, data: EventsRepository) {
