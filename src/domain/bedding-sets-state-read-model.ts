@@ -41,8 +41,12 @@ export default class BeddingSetsReadModel implements BeddingSetsState {
         this.cleaned += sets;
 
         if (this.inLaundery < 0) {
-            this.cleaning += this.inLaundery;
-            this.inLaundery = 0;
+            this.pickUpFromCleaning();
         }
+    }
+
+    pickUpFromCleaning() {
+        this.cleaning += this.inLaundery;
+        this.inLaundery = 0;
     }
 }
