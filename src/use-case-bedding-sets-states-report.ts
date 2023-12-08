@@ -87,16 +87,19 @@ export class UseCaseBeddingSetsStatesReport {
         }
 
         if (pickup.length >= 1) {
-            beddingSets.onPickupLaundry(pickup[0].sets);
-            if (beddingSets.inLaundery < 0) {
-                beddingSets.inLaundery = 0
+            const inLaunderyBeforeCompensation = beddingSets.onPickupLaundry(pickup[0].sets);
+
+            //todo: questo command emette eventi su eventsReposiyory per eliminare cleaningDepots prelevati in anticipo
+            if (inLaunderyBeforeCompensation < 0) {
+                //beddingSets.inLaundery = 0
                 this.eventsRepository.cleaningDepots.filter(event => event.date.getMilliseconds() > currentDate.toJSDate().getMilliseconds()).forEach((event) => {
                     event.sets -= pickup[0].sets
                 })
+                // todo: remove other events while amount is equal to pickupsets
             }
         }
 
-        const { cleaned, inUse, dirty, cleaning, inLaundery } = beddingSets as BeddingSetsState;
+        const { cleaned, inUse, dirty, cleaning, inLaundery } = beddingSets.state;
 
         return {
             date: currentDate.toJSDate(),

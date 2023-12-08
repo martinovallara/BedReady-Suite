@@ -1,12 +1,12 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
 
-export default class BeddingSetsReadModel implements BeddingSetsState {
+export default class BeddingSetsReadModel  {
 
-    cleaned: number = 0;
-    inUse: number = 0;
-    dirty: number = 0;
-    cleaning: number = 0;
-    inLaundery: number = 0;
+    private cleaned: number = 0;
+    private inUse: number = 0;
+    private dirty: number = 0;
+    private cleaning: number = 0;
+    private inLaundery: number = 0;
 
     setup(initialState: BeddingSetsState | undefined) {
         initialState && Object.assign(this, initialState);
@@ -36,17 +36,29 @@ export default class BeddingSetsReadModel implements BeddingSetsState {
         this.inLaundery += sets;
     }
 
-    onPickupLaundry(sets: number) {
+    onPickupLaundry(sets: number): number {
         this.inLaundery -= sets;
         this.cleaned += sets;
-
+        const inLaunderyBeforeCompensation = this.inLaundery;
         if (this.inLaundery < 0) {
             this.pickUpFromCleaning();
         }
+
+        return inLaunderyBeforeCompensation
     }
 
     pickUpFromCleaning() {
         this.cleaning += this.inLaundery;
         this.inLaundery = 0;
+    }
+
+    get state(): BeddingSetsState {
+        return {
+            cleaned: this.cleaned,
+            inUse: this.inUse,
+            dirty: this.dirty,
+            cleaning: this.cleaning,
+            inLaundery: this.inLaundery
+        }
     }
 }
