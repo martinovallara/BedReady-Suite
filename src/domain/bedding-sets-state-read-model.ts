@@ -1,4 +1,5 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
+import subtractUntilZero from "../utils/removerSets.js";
 
 export default class BeddingSetsReadModel  {
 
@@ -32,12 +33,12 @@ export default class BeddingSetsReadModel  {
     }
 
     onFinishCleaning(sets: number) {
-        this.cleaning -= sets;
+        const subtractResult = subtractUntilZero(this.cleaning, sets);
+        this.cleaning = subtractResult.remaining;
         this.inLaundery += sets;
-        if (this.cleaning < 0) {
-            this.inLaundery += this.cleaning;
-            this.cleaning = 0;
-        } // TODO: use removerSet
+        if (this.inCleaningMissing(subtractResult.rest)) {
+            this.removeOnlyThosePresent(subtractResult.rest);
+        }
     }
 
     onPickupLaundry(sets: number): number {
@@ -64,5 +65,13 @@ export default class BeddingSetsReadModel  {
             cleaning: this.cleaning,
             inLaundery: this.inLaundery
         }
+    }
+
+    private removeOnlyThosePresent(rest: number) {
+        this.inLaundery -= rest;
+    }
+
+    private inCleaningMissing(rest: number) {
+        return rest > 0;
     }
 }

@@ -56,24 +56,24 @@ describe('BeddingSets', () => {
     })
 
     test('onFinishCleaning remove sets from cleaning and add to in laundry', () => {
-        beddingSets.setup({ cleaned: 0, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
+        beddingSets.setup({ cleaned: 0, inUse: 0, dirty: 0, cleaning: 2, inLaundery: 0 });
         beddingSets.onFinishCleaning(1);
         expect(beddingSetsState().cleaned).toBe(0);
         expect(beddingSetsState().inUse).toBe(0);
         expect(beddingSetsState().dirty).toBe(0);
-        expect(beddingSetsState().cleaning).toBe(0);
+        expect(beddingSetsState().cleaning).toBe(1);
         expect(beddingSetsState().inLaundery).toBe(1);
     })
 
 
-    test('onFinishCleaning not remove sets from cleaning when not sets are in cleaning', () => {
-
-        beddingSets.onFinishCleaning(1);
+    test('onFinishCleaning not remove sets from cleaning when not enought sets are in cleaning', () => {
+        beddingSets.setup({ cleaned: 0, inUse: 0, dirty: 0, cleaning: 2, inLaundery: 0 });
+        beddingSets.onFinishCleaning(4);
         expect(beddingSetsState().cleaned).toBe(0);
         expect(beddingSetsState().inUse).toBe(0);
         expect(beddingSetsState().dirty).toBe(0);
         expect(beddingSetsState().cleaning).toBe(0);
-        expect(beddingSetsState().inLaundery).toBe(0);
+        expect(beddingSetsState().inLaundery).toBe(2);
     })
 
 

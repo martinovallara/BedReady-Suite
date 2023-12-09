@@ -1,4 +1,9 @@
-export default function removerSets(initialAmount: number, amountToBeRemoved: number): { amount: number; rest: number; } {
-    const rest = initialAmount - amountToBeRemoved;
-    return { amount: rest > 0 ? rest : 0, rest: rest < 0 ? -rest : 0 };
+type SubtractUntiZeroResult = {
+    remaining: number;
+    rest: number;
+};
+
+export default function subtractUntilZero(initialQuantity: number, toSubstract: number): SubtractUntiZeroResult {
+    const rest = initialQuantity - toSubstract;
+    return { remaining: rest > 0 ? rest : 0, rest: rest < 0 ? -rest : 0 };
 }

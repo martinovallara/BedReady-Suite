@@ -2,7 +2,7 @@ import { DateTime } from "luxon"
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
 import EventsRepository from "./infrastructure/repositories/events-repository.js";
-import removerSets from "./utils/removerSets.js";
+import subtractUntilZero from "./utils/removerSets.js";
 
 export type Booking = {
     checkInDate: Date;
@@ -100,9 +100,9 @@ export class UseCaseBeddingSetsStatesReport {
                     let index = 0;
                     do {
                         const event = subsequentCleaningFinish[index];
-                        const setsRest = removerSets(event.sets, setsToCanceldInSubsequenceEventOfFinishCleaning);
+                        const setsRest = subtractUntilZero(event.sets, setsToCanceldInSubsequenceEventOfFinishCleaning);
                         setsToCanceldInSubsequenceEventOfFinishCleaning = setsRest.rest;
-                        event.sets = setsRest.amount
+                        event.sets = setsRest.remaining
                         console.log("correct sets in cleaningDepots: ", event);
                         console.log("setsToCanceldInSubsequenceEventOfFinishCleaning: ", setsToCanceldInSubsequenceEventOfFinishCleaning);
                         index++;
