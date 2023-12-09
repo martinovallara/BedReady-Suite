@@ -165,30 +165,36 @@ describe('beddingSetstatesReport', () => {
     expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
     expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
     expect(report.days[4]).toMatchObject({ date: new Date(4 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 1 });
-    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 }); 
+    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
   });
 
-  it('when set is picked up from laundry before cleaning time increase the sets cleaned and remove sets from in cleaning', () => {
+  it('when set is picked up from laundry before cleaning time increase the sets cleaned, remove sets from in cleaning and finished events', () => {
 
     const bookings: Booking[] = [
       {
         checkInDate: new Date(1 * day),
         checkOutDate: new Date(2 * day),
-        beddingSets: 1
+        beddingSets: 3
       }
     ]
 
     eventsRepository.storeBookingConfirmed(bookings[0]);
 
-    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-    eventsRepository.storeOnPickupLaundry({ date: new Date(3 * day), sets: 1 });
-
-    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
+    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 2, cleaningTime: 2 });
+    eventsRepository.storeOnPickupLaundry({ date: new Date(3 * day), sets: 2 });
+    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(4 * day), sets: 1, cleaningTime: 1 });
+    const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(6);
 
     expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
-    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 8, inUse: 1, dirty: 0, cleaning: 0, inLaundery: 0 });
-    expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
-    expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
+    expect(report.days[1]).toMatchObject({ date: new Date(1 * day), cleaned: 6, inUse: 3, dirty: 0, cleaning: 0, inLaundery: 0 });
+    expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 6, inUse: 0, dirty: 1, cleaning: 2, inLaundery: 0 });
+    expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: 8, inUse: 0, dirty: 1, cleaning: 0, inLaundery: 0 });
+    expect(report.days[4]).toMatchObject({ date: new Date(4 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
+    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
+    expect(report.days[6]).toMatchObject({
+      date: new Date(6 * day), events: [{ name: 'Finish Cleaning', sets: 1 }],
+      cleaned: 8, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 1
+    });
 
   });
 

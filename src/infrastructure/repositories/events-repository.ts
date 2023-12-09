@@ -103,6 +103,10 @@ export default class EventsRepository {
         return this.cleaningDepots.filter(InCleaning => DateTime.fromJSDate(InCleaning.date).plus({ days: InCleaning.cleaningTime + 1 }).toMillis() === current_date.toMillis());
     }
 
+    findFinishCleaningEventsBefore(current_date: DateTime): InCleaning[] {
+        return this.cleaningDepots.filter(InCleaning => DateTime.fromJSDate(InCleaning.date).plus({ days: InCleaning.cleaningTime + 1 }).toMillis() > current_date.toMillis());
+    }
+
     findPickupEvents(current_date: DateTime): Pickup[] {
         return this.pickups.filter(pickup => DateTime.fromJSDate(pickup.date).toMillis() === current_date.toMillis());
     }

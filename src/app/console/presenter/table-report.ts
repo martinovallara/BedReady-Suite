@@ -74,7 +74,7 @@ function getItEvent(eventName: EventName) {
     },
     {
       name: 'Finish Cleaning',
-      it: 'fine pulizia'
+      it: 'pulizia finita'
     },
     {
       name: 'Pickup',

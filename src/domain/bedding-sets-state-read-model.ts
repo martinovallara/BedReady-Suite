@@ -34,6 +34,10 @@ export default class BeddingSetsReadModel  {
     onFinishCleaning(sets: number) {
         this.cleaning -= sets;
         this.inLaundery += sets;
+        if (this.cleaning < 0) {
+            this.inLaundery += this.cleaning;
+            this.cleaning = 0;
+        } // TODO: use removerSet
     }
 
     onPickupLaundry(sets: number): number {
@@ -42,7 +46,7 @@ export default class BeddingSetsReadModel  {
         const inLaunderyBeforeCompensation = this.inLaundery;
         if (this.inLaundery < 0) {
             this.pickUpFromCleaning();
-        }
+        } // TODO: use removerSet
 
         return inLaunderyBeforeCompensation
     }
