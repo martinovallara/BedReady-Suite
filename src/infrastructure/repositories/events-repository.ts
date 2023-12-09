@@ -165,7 +165,7 @@ export default class EventsRepository {
             } as Pickup;
         });
 
-        const startDateReport = data["startDateReport"] as StartDateReport;
+        const startDateReport = data["startDateReport"];
         instance.startDateReport = {
             date: startDateReport?.date ? new Date(startDateReport.date): new Date(0) 
         }
