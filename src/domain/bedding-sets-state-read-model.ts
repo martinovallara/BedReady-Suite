@@ -42,20 +42,15 @@ export default class BeddingSetsReadModel  {
     }
 
     onPickupLaundry(sets: number): number {
-        this.inLaundery -= sets;
+        const subtractResult = subtractUntilZero(this.inLaundery, sets);
+        this.inLaundery = subtractResult.remaining;
         this.cleaned += sets;
-        const inLaunderyBeforeCompensation = this.inLaundery;
-        if (this.inLaundery < 0) {
-            this.pickUpFromCleaning();
-        } // TODO: use removerSet
-
-        return inLaunderyBeforeCompensation
+        if (this.cleanedNotEnought(subtractResult.rest)) {
+            this.pickUpFromCleaning(subtractResult.rest);
+        }
+        return subtractResult.rest
     }
 
-    pickUpFromCleaning() {
-        this.cleaning += this.inLaundery;
-        this.inLaundery = 0;
-    }
 
     get state(): BeddingSetsState {
         return {
@@ -72,6 +67,14 @@ export default class BeddingSetsReadModel  {
     }
 
     private inCleaningMissing(rest: number) {
+        return rest > 0;
+    }
+    
+    private pickUpFromCleaning(rest : number) {
+        this.cleaning -= rest;
+    }
+    
+    private cleanedNotEnought(rest: number) {
         return rest > 0;
     }
 }

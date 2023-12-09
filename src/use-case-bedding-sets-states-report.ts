@@ -88,13 +88,10 @@ export class UseCaseBeddingSetsStatesReport {
         }
 
         if (pickup.length >= 1) {
-            const amountInLaunderyAfterPickup = beddingSets.onPickupLaundry(pickup[0].sets);
+            const restAfterPickup = beddingSets.onPickupLaundry(pickup[0].sets);
             let setsToCanceldInSubsequenceEventOfFinishCleaning = pickup[0].sets;
             //TODO: questo command emette eventi su eventsReposiyory per eliminare cleaningDepots prelevati in anticipo
-            if (amountInLaunderyAfterPickup < 0) {
-                //beddingSets.inLaundery = 0
-                console.log("amountInLaunderyAfterPickup < 0: ", amountInLaunderyAfterPickup)
-
+            if (restAfterPickup > 0) {
                 const subsequentCleaningFinish = this.eventsRepository.findFinishCleaningEventsBefore(currentDate)
                 if (subsequentCleaningFinish.length > 0) {
                     let index = 0;
@@ -103,16 +100,11 @@ export class UseCaseBeddingSetsStatesReport {
                         const setsRest = subtractUntilZero(event.sets, setsToCanceldInSubsequenceEventOfFinishCleaning);
                         setsToCanceldInSubsequenceEventOfFinishCleaning = setsRest.rest;
                         event.sets = setsRest.remaining
-                        console.log("correct sets in cleaningDepots: ", event);
-                        console.log("setsToCanceldInSubsequenceEventOfFinishCleaning: ", setsToCanceldInSubsequenceEventOfFinishCleaning);
                         index++;
                     } while (setsToCanceldInSubsequenceEventOfFinishCleaning < 0)
-
-                    console.log(this.eventsRepository.cleaningDepots)
                     // TODO: remove other events while amount is equal to pickupsets
                 }
             }
-
         }
 
         const { cleaned, inUse, dirty, cleaning, inLaundery } = beddingSets.state;
