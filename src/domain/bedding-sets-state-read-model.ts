@@ -28,8 +28,17 @@ export default class BeddingSetsReadModel  {
     }
 
     OnBrougthForCleaning(sets: number) {
+        const subtractResult = subtractUntilZero(this.dirty, sets);
+        this.dirty = subtractResult.remaining;
         this.cleaning += sets;
-        this.dirty -= sets;
+        if(subtractResult.rest > 0) {
+            const subtractResult = subtractUntilZero(this.inUse, sets);
+            this.inUse = subtractResult.remaining;
+            if (subtractResult.rest > 0) {
+                const subtractResult = subtractUntilZero(this.cleaned, sets);
+                this.cleaned = subtractResult.remaining;                
+            }
+        }
     }
 
     onFinishCleaning(sets: number) {

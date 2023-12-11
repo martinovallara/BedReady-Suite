@@ -48,13 +48,26 @@ describe('BeddingSets', () => {
     })
 
     test('OnBrougthForCleaning remove sets from dirty and add to claaning', () => {
-
+        beddingSets.setup({ cleaned: 0, inUse: 0, dirty: 1, cleaning: 0, inLaundery: 0 });
         beddingSets.OnBrougthForCleaning(1);
+
         const state = beddingSetsState();
         expect(state.cleaned).toBe(0);
         expect(state.inUse).toBe(0);
-        expect(state.dirty).toBe(-1);
+        expect(state.dirty).toBe(0);
         expect(state.cleaning).toBe(1);
+        expect(state.inLaundery).toBe(0);
+    })
+
+    test('OnBrougthForCleaning moves first from dirty and if not enough from inUse and clean to cleaning', () => {
+        beddingSets.setup({ cleaned: 1, inUse: 1, dirty: 1, cleaning: 0, inLaundery: 0 });
+        beddingSets.OnBrougthForCleaning(3);
+
+        const state = beddingSetsState();
+        expect(state.cleaned).toBe(0);
+        expect(state.inUse).toBe(0);
+        expect(state.dirty).toBe(0);
+        expect(state.cleaning).toBe(3);
         expect(state.inLaundery).toBe(0);
     })
 
