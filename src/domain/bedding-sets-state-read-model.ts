@@ -1,5 +1,5 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
-import { subtractFromContainers } from "../utils/remover-sets.js";
+import { Containers, subtractFromContainers } from "../utils/remover-sets.js";
 
 export default class BeddingSetsReadModel {
 
@@ -27,36 +27,48 @@ export default class BeddingSetsReadModel {
         this.cleaned += amountOfBeddingSets;
     }
 
-    OnBrougthForCleaning(sets: number) {
-
-        const containers = [this.dirty, this.inUse, this.cleaned];
-
+    onBroughtForCleaning(sets: number) {
+        const containers: Containers = new Map<string, number>([
+            ['dirty', this.dirty],
+            ['inUse', this.inUse],
+            ['cleaned', this.cleaned]
+        ]);
+        
         const subtractResult = subtractFromContainers(containers, sets);
 
-        this.dirty = subtractResult[0];
-        this.inUse = subtractResult[1];
-        this.cleaned = subtractResult[2];
+        this.dirty = subtractResult.get('dirty') as number; 
+        this.inUse = subtractResult.get('inUse') as number ;
+        this.cleaned = subtractResult.get('cleaned') as number;
 
         this.cleaning += sets;
-
     }
 
-    onFinishCleaning(sets: number) {
-        const containers = [this.cleaning];
-        const subtractResult = subtractFromContainers(containers, sets);
 
-        this.cleaning = Math.max(0, subtractResult[0]);
-        this.inLaundery += subtractResult[0] < 0 ? -subtractResult[0] : sets;
+
+    onFinishCleaning(sets: number) {
+        const containers = new Map<string, number>([
+            ['cleaning', this.cleaning ]
+        ]);
+        const inCleaningAfterSubtract = subtractFromContainers(containers, sets).get('cleaning') as number;
+
+        this.cleaning = Math.max(0, inCleaningAfterSubtract);
+        this.inLaundery += inCleaningAfterSubtract >= 0 ? sets: -inCleaningAfterSubtract;
     }
 
     onPickupLaundry(sets: number): number {
 
-        const containers = [this.inLaundery, this.cleaning];
+        const containers =new Map<string, number>([
+            [ 'inLaundery',  this.inLaundery ],
+            [ 'cleaning',  this.cleaning ]
+        ]);
         const subtractResult = subtractFromContainers(containers, sets);
 
-        this.inLaundery = subtractResult[0];
-        const subtractFromCleaning = this.cleaning - subtractResult[1];
-        this.cleaning = subtractResult[1];
+        this.inLaundery = subtractResult.get('inLaundery') as number;
+        
+        const inCleaningAfterSubtract = subtractResult.get('cleaning') as number;
+        const subtractFromCleaning = this.cleaning - inCleaningAfterSubtract;
+
+        this.cleaning = inCleaningAfterSubtract;
         this.cleaned += sets;
 
         return subtractFromCleaning;

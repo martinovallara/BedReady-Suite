@@ -53,7 +53,7 @@ export class UseCaseBeddingSetsStatesReport {
     }
 
     beddingSetsStatus = (beddingSets: BeddingSetsReadModel, dateZero: DateTime, days: number): BeddingSetsStateOnDate => {
-        const currentDate = dateZero.plus({ days: days });
+        const currentDate = dateZero.plus({ days });
 
         const onAddBeddingSets = this.eventsRepository.findAddBeddingSetsEvents(currentDate);
 
@@ -80,7 +80,7 @@ export class UseCaseBeddingSetsStatesReport {
         }
 
         if (InCleaning.length >= 1) {
-            beddingSets.OnBrougthForCleaning(InCleaning[0].sets);
+            beddingSets.onBroughtForCleaning(InCleaning[0].sets);
         }
 
         if (onFinishCleaning.length >= 1) {
@@ -88,10 +88,10 @@ export class UseCaseBeddingSetsStatesReport {
         }
 
         if (pickup.length >= 1) {
-            const subtractFromCleaning = beddingSets.onPickupLaundry(pickup[0].sets);
-            let setsToCanceldInSubsequenceEventOfFinishCleaning = subtractFromCleaning;
+            const subtractFromInCleaning = beddingSets.onPickupLaundry(pickup[0].sets);
+            let setsToCanceldInSubsequenceEventOfFinishCleaning = subtractFromInCleaning;
             //TODO: questo command emette eventi su eventsReposiyory per eliminare cleaningDepots prelevati in anticipo
-            if (subtractFromCleaning > 0) {
+            if (subtractFromInCleaning > 0) {
                 const subsequentCleaningFinish = this.eventsRepository.findFinishCleaningEventsBefore(currentDate)
                 if (subsequentCleaningFinish.length > 0) {
                     let index = 0;

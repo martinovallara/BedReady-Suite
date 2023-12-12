@@ -14,39 +14,43 @@ describe('remover sets', () => {
 
 describe('remover from a list of containers', () => {
     it('remove quantity from container', () => {
-        const containers = [2]
+        const containers = new Map([['c1', 2]])
         const result = subtractFromContainers(containers, 1);
 
-        expect(result).toEqual([1]);
+        expect(result.get('c1')).toBe(1);
     })
 
     it('remove quantity from containers', () => {
-        const containers = [2, 2]
+        const containers = new Map([[ 'c1', 2 ], [ 'c2', 2 ]]);
         const result = subtractFromContainers(containers, 3);
 
-        expect(result).toEqual([0, 1]);
+        expect(result.get('c1')).toBe(0);
+        expect(result.get('c2')).toBe(1);
     })
 
     it('should return 0 quantity if remove all quantity in containers', () => {
-        const containers = [2, 2]
+        const containers =  new Map([[ 'c1', 2 ], [ 'c2', 2 ]]);
         const result = subtractFromContainers(containers, 4);
 
-        expect(result).toEqual([0, 0]);
+        expect(result.get('c1')).toBe(0);
+        expect(result.get('c2')).toBe(0);
+
     })
 
     it('should return negative quantity only at the last container', () => {
-        const containers = [2, 2]
+        const containers =new Map([[ 'c1', 2 ], [ 'c2', 2 ]]);
         const result = subtractFromContainers(containers, 8);
 
-        expect(result).toEqual([0, -4]);
+        expect(result.get('c1')).toBe(0);
+        expect(result.get('c2')).toBe(-4);
     })
 
 
-    it('remove quantity from container ???', () => {
-        const containers = [2]
+    it('should return negative quantity only at the last container 2', () => {
+        const containers = new Map([[ 'c1', 2 ]]);
         const result = subtractFromContainers(containers, 3);
 
-        expect(result).toEqual([-1]);
+        expect(result.get('c1')).toBe(-1);
     })
 })
 

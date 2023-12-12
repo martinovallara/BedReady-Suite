@@ -168,7 +168,7 @@ describe('beddingSetstatesReport', () => {
     expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
   });
 
-  it('when set is picked up from laundry before cleaning time increase the sets cleaned, remove sets from in cleaning and finished events', () => {
+  it('when set is picked up before cleaning time increase the sets cleaned should removes sets from in cleaning and from finished events', () => {
 
     const bookings: Booking[] = [
       {
