@@ -2,7 +2,7 @@ import { DateTime } from "luxon"
 import { BeddingSetsStatesReport, BeddingSetsStateOnDate, EventName, Event } from "./interfaces/bedding-sets-states-report.js";
 import BeddingSetsReadModel from "./domain/bedding-sets-state-read-model.js";
 import EventsRepository from "./infrastructure/repositories/events-repository.js";
-import subtractUntilZero from "./utils/removerSets.js";
+import { subtractUntilZero } from "./utils/remover-sets.js";
 
 export type Booking = {
     checkInDate: Date;
@@ -88,10 +88,10 @@ export class UseCaseBeddingSetsStatesReport {
         }
 
         if (pickup.length >= 1) {
-            const restAfterPickup = beddingSets.onPickupLaundry(pickup[0].sets);
-            let setsToCanceldInSubsequenceEventOfFinishCleaning = pickup[0].sets;
+            const subtractFromCleaning = beddingSets.onPickupLaundry(pickup[0].sets);
+            let setsToCanceldInSubsequenceEventOfFinishCleaning = subtractFromCleaning;
             //TODO: questo command emette eventi su eventsReposiyory per eliminare cleaningDepots prelevati in anticipo
-            if (restAfterPickup > 0) {
+            if (subtractFromCleaning > 0) {
                 const subsequentCleaningFinish = this.eventsRepository.findFinishCleaningEventsBefore(currentDate)
                 if (subsequentCleaningFinish.length > 0) {
                     let index = 0;

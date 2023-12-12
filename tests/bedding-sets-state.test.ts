@@ -47,7 +47,7 @@ describe('BeddingSets', () => {
         expect(state.inLaundery).toBe(0);
     })
 
-    test('OnBrougthForCleaning remove sets from dirty and add to claaning', () => {
+    test('OnBrougthForCleaning remove sets from dirty and add to cleaning', () => {
         beddingSets.setup({ cleaned: 0, inUse: 0, dirty: 1, cleaning: 0, inLaundery: 0 });
         beddingSets.OnBrougthForCleaning(1);
 

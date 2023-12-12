@@ -190,7 +190,7 @@ describe('beddingSetstatesReport', () => {
     expect(report.days[2]).toMatchObject({ date: new Date(2 * day), cleaned: 6, inUse: 0, dirty: 1, cleaning: 2, inLaundery: 0 });
     expect(report.days[3]).toMatchObject({ date: new Date(3 * day), cleaned: 8, inUse: 0, dirty: 1, cleaning: 0, inLaundery: 0 });
     expect(report.days[4]).toMatchObject({ date: new Date(4 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
-    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
+    expect(report.days[5]).toMatchObject({ date: new Date(5 * day), events: [{ name: 'Finish Cleaning', sets: 0 }],cleaned: 8, inUse: 0, dirty: 0, cleaning: 1, inLaundery: 0 });
     expect(report.days[6]).toMatchObject({
       date: new Date(6 * day), events: [{ name: 'Finish Cleaning', sets: 1 }],
       cleaned: 8, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 1

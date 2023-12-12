@@ -1,7 +1,7 @@
 import { BeddingSetsState } from "../interfaces/bedding-sets-states-report.js";
-import subtractUntilZero from "../utils/removerSets.js";
+import { subtractFromContainers } from "../utils/remover-sets.js";
 
-export default class BeddingSetsReadModel  {
+export default class BeddingSetsReadModel {
 
     private cleaned: number = 0;
     private inUse: number = 0;
@@ -28,36 +28,38 @@ export default class BeddingSetsReadModel  {
     }
 
     OnBrougthForCleaning(sets: number) {
-        const subtractResult = subtractUntilZero(this.dirty, sets);
-        this.dirty = subtractResult.remaining;
+
+        const containers = [this.dirty, this.inUse, this.cleaned];
+
+        const subtractResult = subtractFromContainers(containers, sets);
+
+        this.dirty = subtractResult[0];
+        this.inUse = subtractResult[1];
+        this.cleaned = subtractResult[2];
+
         this.cleaning += sets;
-        if(subtractResult.rest > 0) {
-            const subtractResult = subtractUntilZero(this.inUse, sets);
-            this.inUse = subtractResult.remaining;
-            if (subtractResult.rest > 0) {
-                const subtractResult = subtractUntilZero(this.cleaned, sets);
-                this.cleaned = subtractResult.remaining;                
-            }
-        }
+
     }
 
     onFinishCleaning(sets: number) {
-        const subtractResult = subtractUntilZero(this.cleaning, sets);
-        this.cleaning = subtractResult.remaining;
-        this.inLaundery += sets;
-        if (this.inCleaningMissing(subtractResult.rest)) {
-            this.removeOnlyThosePresent(subtractResult.rest);
-        }
+        const containers = [this.cleaning];
+        const subtractResult = subtractFromContainers(containers, sets);
+
+        this.cleaning = Math.max(0, subtractResult[0]);
+        this.inLaundery += subtractResult[0] < 0 ? -subtractResult[0] : sets;
     }
 
     onPickupLaundry(sets: number): number {
-        const subtractResult = subtractUntilZero(this.inLaundery, sets);
-        this.inLaundery = subtractResult.remaining;
+
+        const containers = [this.inLaundery, this.cleaning];
+        const subtractResult = subtractFromContainers(containers, sets);
+
+        this.inLaundery = subtractResult[0];
+        const subtractFromCleaning = this.cleaning - subtractResult[1];
+        this.cleaning = subtractResult[1];
         this.cleaned += sets;
-        if (this.cleanedNotEnought(subtractResult.rest)) {
-            this.pickUpFromCleaning(subtractResult.rest);
-        }
-        return subtractResult.rest
+
+        return subtractFromCleaning;
     }
 
 
@@ -78,11 +80,11 @@ export default class BeddingSetsReadModel  {
     private inCleaningMissing(rest: number) {
         return rest > 0;
     }
-    
-    private pickUpFromCleaning(rest : number) {
+
+    private pickUpFromCleaning(rest: number) {
         this.cleaning -= rest;
     }
-    
+
     private cleanedNotEnought(rest: number) {
         return rest > 0;
     }
