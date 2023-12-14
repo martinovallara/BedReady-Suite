@@ -20,6 +20,13 @@ jest.mock('fs', () => {
     };
 });
 
+ // mock persistToDrive function
+jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
+    return {
+        persistToDrive: jest.fn()
+    }
+})
+
 beforeAll(() => {
     mockFileContent = undefined;
 })

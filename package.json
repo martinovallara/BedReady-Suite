@@ -47,10 +47,12 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^3.0.0",
     "@inquirer/input": "^1.2.14",
     "@inquirer/prompts": "^3.3.0",
     "chalk": "^4.1.0",
     "cli-table3": "^0.6.3",
+    "googleapis": "^129.0.0",
     "luxon": "^3.4.4"
   }
 }

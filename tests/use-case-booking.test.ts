@@ -14,7 +14,12 @@ jest.mock('fs', () => ({
   writeFile: jest.fn(),
   existsSync: jest.fn().mockReturnValue(false)
 }));
-
+ // mock persistToDrive function
+ jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
+  return {
+      persistToDrive: jest.fn()
+  }
+})
 
 beforeEach(() => {
   eventsRepository = EventsRepository.renew();
