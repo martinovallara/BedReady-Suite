@@ -35,7 +35,7 @@ beforeEach(async () => {
   console.log(" | use-caseBeforeEach |");
   jsonEventsData = undefined;
 
-  eventsRepository = await EventsRepository.renew();
+  eventsRepository = await EventsRepository.getInstance();
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
 
   await eventsRepository.storeInitialState(initialAmountOfBeddingSet(dateZero, amountOfBeddingSet));

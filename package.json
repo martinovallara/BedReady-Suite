@@ -11,7 +11,8 @@
     "bedready-suite": "dist/bedready-suite.js"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest -i",
+    "test-watch": "jest -i --watch",
     "build": "tsc ",
     "build:watch": "tsc --watch",
     "start": "node dist/index.js",

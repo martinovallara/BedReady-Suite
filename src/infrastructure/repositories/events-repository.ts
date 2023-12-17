@@ -23,20 +23,12 @@ export default class EventsRepository {
     pickups: Pickup[];
     initialState: InitialState | undefined
 
-    static instance: EventsRepository | null;
     static async getInstance(): Promise<EventsRepository> {
+        const instance = new EventsRepository();
+        
+        await EventsRepository.readFromDriveAndDeserialize(instance)
 
-        if (!EventsRepository.instance) {
-            EventsRepository.instance = new EventsRepository();
-
-            await EventsRepository.readFromDriveAndDeserialize(EventsRepository.instance)
-
-        }
-        return EventsRepository.instance;
-    }
-    static async renew() {
-        EventsRepository.instance = null;
-        return await EventsRepository.getInstance();
+        return instance;
     }
 
     static readFromDriveAndDeserialize = async (instance: EventsRepository) => {
@@ -58,15 +50,15 @@ export default class EventsRepository {
         this.pickups = [];
     }
 
-    storeAddBeddingSets: (amountOfBeddingSets: AdditionBeddingSets) => void = async (amountOfBeddingSets: AdditionBeddingSets) => {
+    async storeAddBeddingSets(amountOfBeddingSets: AdditionBeddingSets) {
         this.additionBeddingSets.push(amountOfBeddingSets);
         await this.persistToFile();
-    };
+    }
 
-    storeBookingConfirmed: (booking: Booking) => void = async (booking: Booking) => {
+    async storeBookingConfirmed(booking: Booking)  {
         this.bookingsConfirmed.push(booking);
         await this.persistToFile();
-    };
+    }
     async storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
         await this.persistToFile();
@@ -76,7 +68,7 @@ export default class EventsRepository {
         await this.persistToFile();
     }
 
-    storeInitialState: (initialState: InitialState) => void = async (initialState: InitialState) => {
+    async storeInitialState(initialState: InitialState) {
         this.initialState = initialState;
         await this.persistToFile();
     }

@@ -42,7 +42,7 @@ describe('EventsRepository', () => {
         await eventsRepository.storeStartDateReport(expectedStartReportDate);
 
         expect(eventsRepository.startDateReport).toStrictEqual(expectedStartReportDate);
-        const eventsRepositoryReloaded = await EventsRepository.renew();
+        const eventsRepositoryReloaded = await EventsRepository.getInstance();
 
         expect(eventsRepositoryReloaded.bookingsConfirmed.length).toBe(1);
         // expect checkIndate is a date
