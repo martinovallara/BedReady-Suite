@@ -5,8 +5,8 @@ import useCaseBaddingSetStateReport from "../../../use-case-bedding-sets-states-
 import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
 import { EventName } from "../../../interfaces/bedding-sets-states-report.js";
 
-export default function showReport() {
-  const eventsRepository = EventsRepository.getInstance();
+export default async function showReport() {
+  const eventsRepository = await EventsRepository.getInstance();
   const beddingSetsReport = useCaseBaddingSetStateReport(eventsRepository);
   const report = beddingSetsReport.report(40);
 
@@ -30,6 +30,8 @@ export default function showReport() {
     head: ['data', 'eventi', 'pulite', 'in uso', 'sporche', 'in pulizia', 'in lavanderia', 'sets'],
     style: { 'padding-left': 1, 'padding-right': 1 } // Add style property
   });
+
+  console.log("------ show report -----");
 
   reportTable.forEach((row) => {
     const rowTrasformed = row.map((cell) => {

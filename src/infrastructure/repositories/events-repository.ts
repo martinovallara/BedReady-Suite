@@ -1,8 +1,7 @@
 import { DateTime } from "luxon";
 import { InitialState } from "../../interfaces/bedding-sets-states-report.js";
 import { AdditionBeddingSets, Booking, InCleaning, Pickup } from "../../use-case-bedding-sets-states-report.js";
-import fs from 'fs';
-import { persistToDrive } from "../services/google-drive-api.js";
+import { persistToDrive, readStorageFromDrive } from "../services/google-drive-api.js";
 
 type StartDateReport = {
     date: Date;
@@ -24,30 +23,33 @@ export default class EventsRepository {
     pickups: Pickup[];
     initialState: InitialState | undefined
 
-    static EVENTS_STORAGE_PATH: () => string = () => process.env.EVENTS_STORAGE_PATH as string
-
     static instance: EventsRepository | null;
-    static getInstance(): EventsRepository {
+    static async getInstance(): Promise<EventsRepository> {
 
         if (!EventsRepository.instance) {
             EventsRepository.instance = new EventsRepository();
-            // deserialize from file if exists
-            if (fs.existsSync(EventsRepository.EVENTS_STORAGE_PATH())) {
-                const jsonData = fs.readFileSync(EventsRepository.EVENTS_STORAGE_PATH(), 'utf8');
-                const data = JSON.parse(jsonData) as EventsRepository;
 
-                EventsRepository.deserialize(EventsRepository.instance, data);
+            await EventsRepository.readFromDriveAndDeserialize(EventsRepository.instance)
 
-            }
         }
         return EventsRepository.instance;
     }
-
-
-    static renew() {
+    static async renew() {
         EventsRepository.instance = null;
-        return EventsRepository.getInstance();
+        return await EventsRepository.getInstance();
     }
+
+    static readFromDriveAndDeserialize = async (instance: EventsRepository) => {
+        const jsonData = await readStorageFromDrive()
+        if (jsonData !== undefined) {
+            const data = JSON.parse(jsonData) as EventsRepository;
+            console.log("Read from DRIVE: \n" + data);
+            EventsRepository.deserialize(instance, data as EventsRepository);
+        } else {
+            console.log("=====>>>> No data on drive <<<<=====");
+        }
+    }
+
 
     private constructor() {
         this.additionBeddingSets = [];
@@ -56,32 +58,32 @@ export default class EventsRepository {
         this.pickups = [];
     }
 
-    storeAddBeddingSets: (amountOfBeddingSets: AdditionBeddingSets) => void = (amountOfBeddingSets: AdditionBeddingSets) => {
+    storeAddBeddingSets: (amountOfBeddingSets: AdditionBeddingSets) => void = async (amountOfBeddingSets: AdditionBeddingSets) => {
         this.additionBeddingSets.push(amountOfBeddingSets);
-        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+        await this.persistToFile();
     };
 
-    storeBookingConfirmed: (booking: Booking) => void = (booking: Booking) => {
+    storeBookingConfirmed: (booking: Booking) => void = async (booking: Booking) => {
         this.bookingsConfirmed.push(booking);
-        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+        await this.persistToFile();
     };
-    storeBrougthForCleaningEvent(InCleaning: InCleaning) {
+    async storeBrougthForCleaningEvent(InCleaning: InCleaning) {
         this.cleaningDepots.push(InCleaning);
-        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+        await this.persistToFile();
     }
-    storeOnPickupLaundry(pickup: Pickup) {
+    async storeOnPickupLaundry(pickup: Pickup) {
         this.pickups.push(pickup);
-        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+        await this.persistToFile();
     }
 
-    storeInitialState: (initialState: InitialState) => void = (initialState: InitialState) => {
+    storeInitialState: (initialState: InitialState) => void = async (initialState: InitialState) => {
         this.initialState = initialState;
-        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+        await this.persistToFile();
     }
 
-    storeStartDateReport(dateStartReport: { date: Date; }) {
+    async storeStartDateReport(dateStartReport: { date: Date; }) {
         this.startDateReport = dateStartReport;
-        this.persistToFile(EventsRepository.EVENTS_STORAGE_PATH());
+        await this.persistToFile();
     }
 
     findAddBeddingSetsEvents(current_date: DateTime): AdditionBeddingSets[] {
@@ -131,14 +133,17 @@ export default class EventsRepository {
         return checkOut.toMillis() === current_date.toMillis();
     };
 
-    public persistToFile(filename: string): void {
+    public async persistToFile(): Promise<void> {
         const data = JSON.stringify(this);
-        fs.writeFileSync(filename, data, 'utf8');
+        // fs.writeFileSync(filename, data, 'utf8');
 
-        persistToDrive(data);
+        await persistToDrive(data);
     }
 
     private static deserialize(instance: EventsRepository, data: EventsRepository) {
+        console.log("xxxx DESERIALIZING xxxx:\n" + JSON.stringify(data));
+        console.log("data['bookingsConfirmed']", data["bookingsConfirmed"]);
+
         instance.bookingsConfirmed = data["bookingsConfirmed"].map((booking: Booking) => {
             return {
                 ...booking,

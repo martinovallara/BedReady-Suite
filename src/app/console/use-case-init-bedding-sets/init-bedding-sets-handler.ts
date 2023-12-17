@@ -5,7 +5,7 @@ import { parseJSDate } from "../../../utils/datetime-parser.js";
 import EventsRepository from "../../../infrastructure/repositories/events-repository.js";
 
 export default async function useCaseInitBeddingSets() {
-  const eventsRepository = EventsRepository.getInstance();
+  const eventsRepository = await EventsRepository.getInstance();
 
   const dateZero: string = await input({
     message: "data a cui corrisponde lo stato iniziale dei sets matrimoniali",
@@ -85,6 +85,6 @@ export default async function useCaseInitBeddingSets() {
     inLaundery: parseInt(inLaundery)
   }
 
-  eventsRepository.storeInitialState(state);
+  await eventsRepository.storeInitialState(state);
   
 }

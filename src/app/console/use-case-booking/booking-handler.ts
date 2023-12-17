@@ -6,7 +6,13 @@ import EventsRepository from "../../../infrastructure/repositories/events-reposi
 
 
 export default async function useCaseBookingInput() {
-  const eventsRepository = EventsRepository.getInstance();
+  const eventsRepository = await EventsRepository.getInstance();
+  const isDateTimeValid = (): ((value: string) => string | boolean | Promise<string | boolean>) | undefined => {
+    return (input) => {
+      const date = DateTime.fromFormat(input, 'dd/LL/yy');
+      return date.isValid ? true : 'formato non valido! es. dd/MM/yy';
+    };
+  }
 
   const checkInDate = await input({
     message: 'data check-in',
@@ -40,14 +46,8 @@ export default async function useCaseBookingInput() {
   console.log(JSON.stringify(bookingInput, null, 2));
   console.log(bookingInput.checkInDate.toLocaleDateString());
 
-  eventsRepository.storeBookingConfirmed(bookingInput);
+  await eventsRepository.storeBookingConfirmed(bookingInput);
 
-  function isDateTimeValid(): ((value: string) => string | boolean | Promise<string | boolean>) | undefined {
-    return (input) => {
-      const date = DateTime.fromFormat(input, 'dd/LL/yy');
-      return date.isValid ? true : 'formato non valido! es. dd/MM/yy';
-    };
-  }
 }
 
 

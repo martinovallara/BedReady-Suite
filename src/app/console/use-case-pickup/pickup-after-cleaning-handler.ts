@@ -7,7 +7,7 @@ import { parseJSDate } from '../../../utils/datetime-parser.js';
 import EventsRepostiory from '../../../infrastructure/repositories/events-repository.js';
 
 export default async function useCasePickupAfterCleaningInput() {
-    const repositoryEvents = EventsRepostiory.getInstance();
+    const repositoryEvents = await EventsRepostiory.getInstance();
 
     const pickupAfterCleaningDate: string = await input({
         message: "data a cui corrisponde il ritiro dei sets matrimoniali dopo la pulizia",
@@ -34,6 +34,6 @@ export default async function useCasePickupAfterCleaningInput() {
         sets: parseInt(pickupAfterCleaning),
     }
 
-    repositoryEvents.storeOnPickupLaundry(pickupAfterCleaningInput);
+    await repositoryEvents.storeOnPickupLaundry(pickupAfterCleaningInput);
 
 }

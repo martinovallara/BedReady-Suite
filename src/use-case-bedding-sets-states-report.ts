@@ -140,8 +140,8 @@ export class UseCaseBeddingSetsStatesReport {
             .map(({ name, sets }) => ({ name, sets: sets ?? 0 }));
     }
 
-    setStartDateReport(startDateReport: Date) {
-        this.eventsRepository.storeStartDateReport({ date: startDateReport });
+    async setStartDateReport(startDateReport: Date) {
+        await this.eventsRepository.storeStartDateReport({ date: startDateReport });
     }
 }
 

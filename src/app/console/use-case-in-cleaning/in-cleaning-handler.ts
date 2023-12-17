@@ -5,7 +5,7 @@ import { parseJSDate } from "../../../utils/datetime-parser.js";
 import EventsRepostiory from '../../../infrastructure/repositories/events-repository.js';
 
 export default async function useCaseInCleaningInput() {
-  const repositoryEvents = EventsRepostiory.getInstance();
+  const repositoryEvents = await EventsRepostiory.getInstance();
 
   // crea sequenza di input per creare/registrare un inCleaning Event
 
@@ -45,5 +45,5 @@ export default async function useCaseInCleaningInput() {
     cleaningTime: parseInt(cleaningTime),
   };
 
-  repositoryEvents.storeBrougthForCleaningEvent(inCleaning);
+  await repositoryEvents.storeBrougthForCleaningEvent(inCleaning);
 }

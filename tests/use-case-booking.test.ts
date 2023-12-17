@@ -9,28 +9,41 @@ const amountOfBeddingSet = 9;
 let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 let eventsRepository: EventsRepository;
 
+let jsonEventsData: string | undefined = undefined;
+/*
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
   writeFile: jest.fn(),
   existsSync: jest.fn().mockReturnValue(false)
 }));
- // mock persistToDrive function
+*/
+ // mock persistToDrive, readStorageFromDrive function
  jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
   return {
-      persistToDrive: jest.fn()
+      persistToDrive: jest.fn((data) => {
+        console.log("use-case-persist to mock: ", data);
+          jsonEventsData = data;
+      }),
+      readStorageFromDrive: jest.fn(() => {
+          console.log("use-case-read from mock: ", jsonEventsData);
+          return jsonEventsData 
+      }),
   }
 })
 
-beforeEach(() => {
-  eventsRepository = EventsRepository.renew();
+beforeEach(async () => {
+  console.log(" | use-caseBeforeEach |");
+  jsonEventsData = undefined;
+
+  eventsRepository = await EventsRepository.renew();
   beddingSetsStatesReport = useCaseBeddingSetsStatesReport(eventsRepository);
 
-  eventsRepository.storeInitialState(initialAmountOfBeddingSet(dateZero, amountOfBeddingSet));
+  await eventsRepository.storeInitialState(initialAmountOfBeddingSet(dateZero, amountOfBeddingSet));
 })
 
 afterEach(() => {
-  // restore mock
-  jest.clearAllMocks();
+  jsonEventsData = undefined;
+  console.log("_ use-caseAfterEach _");
 })
 
 describe('beddingSetstatesReport', () => {
@@ -49,7 +62,7 @@ describe('beddingSetstatesReport', () => {
     it.each([
       { sets: 2 },
       { sets: 4 }
-    ])('1 days and $sets bedding sets, should move it to inUse/dirty when check-in/check-out occur', ({ sets }) => {
+    ])('1 days and $sets bedding sets, should move it to inUse/dirty when check-in/check-out occur', async ({ sets }) => {
 
       const cleanedExpected = amountOfBeddingSet - sets;
 
@@ -59,7 +72,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: sets
       }
 
-      eventsRepository.storeBookingConfirmed(booking);
+      await eventsRepository.storeBookingConfirmed(booking);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -73,7 +86,7 @@ describe('beddingSetstatesReport', () => {
     it.each([
       { sets: 2 },
       { sets: 4 }
-    ])('2 days and $sets bedding sets, should move it to inUse/dirty when check-in/check-out occur', ({ sets }) => {
+    ])('2 days and $sets bedding sets, should move it to inUse/dirty when check-in/check-out occur', async ({ sets }) => {
       const cleanedExpected = amountOfBeddingSet - sets;
 
       const booking: Booking = {
@@ -82,7 +95,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: sets
       }
 
-      eventsRepository.storeBookingConfirmed(booking);
+      await eventsRepository.storeBookingConfirmed(booking);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -94,7 +107,7 @@ describe('beddingSetstatesReport', () => {
       expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: cleanedExpected, inUse: 0, dirty: sets, cleaning: 0, inLaundery: 0 });
     });
 
-    it('2 bookings with 2 days each', () => {
+    it('2 bookings with 2 days each', async () => {
 
 
       const bookings: Booking[] = [
@@ -110,8 +123,8 @@ describe('beddingSetstatesReport', () => {
         }
       ]
 
-      eventsRepository.storeBookingConfirmed(bookings[0]);
-      eventsRepository.storeBookingConfirmed(bookings[1]);
+      await eventsRepository.storeBookingConfirmed(bookings[0]);
+      await eventsRepository.storeBookingConfirmed(bookings[1]);
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -123,7 +136,7 @@ describe('beddingSetstatesReport', () => {
     });
 
 
-    it('when sets is brougth for cleaning to laundry only after 7 days the sets become ready to pickup', () => {
+    it('when sets is brougth for cleaning to laundry only after 7 days the sets become ready to pickup', async () => {
 
       const bookings: Booking[] = [
         {
@@ -133,9 +146,9 @@ describe('beddingSetstatesReport', () => {
         }
       ]
 
-      eventsRepository.storeBookingConfirmed(bookings[0]);
+      await eventsRepository.storeBookingConfirmed(bookings[0]);
 
-      eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
+      await eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 7 });
 
       const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(10);
 
@@ -148,7 +161,7 @@ describe('beddingSetstatesReport', () => {
     });
   });
 
-  it('when set is picked up from laundry increase the sets cleaned', () => {
+  it('when set is picked up from laundry increase the sets cleaned', async () => {
 
     const bookings: Booking[] = [
       {
@@ -158,10 +171,10 @@ describe('beddingSetstatesReport', () => {
       }
     ]
 
-    eventsRepository.storeBookingConfirmed(bookings[0]);
+    await eventsRepository.storeBookingConfirmed(bookings[0]);
 
-    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-    eventsRepository.storeOnPickupLaundry({ date: new Date(5 * day), sets: 1 });
+    await eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
+    await eventsRepository.storeOnPickupLaundry({ date: new Date(5 * day), sets: 1 });
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -173,7 +186,7 @@ describe('beddingSetstatesReport', () => {
     expect(report.days[5]).toMatchObject({ date: new Date(5 * day), cleaned: 9, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
   });
 
-  it('when set is picked up before cleaning time increase the sets cleaned should removes sets from in cleaning and from finished events', () => {
+  it('when set is picked up before cleaning time increase the sets cleaned should removes sets from in cleaning and from finished events', async () => {
 
     const bookings: Booking[] = [
       {
@@ -183,11 +196,11 @@ describe('beddingSetstatesReport', () => {
       }
     ]
 
-    eventsRepository.storeBookingConfirmed(bookings[0]);
+    await eventsRepository.storeBookingConfirmed(bookings[0]);
 
-    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 2, cleaningTime: 2 });
-    eventsRepository.storeOnPickupLaundry({ date: new Date(3 * day), sets: 2 });
-    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(4 * day), sets: 1, cleaningTime: 1 });
+    await eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 2, cleaningTime: 2 });
+    await eventsRepository.storeOnPickupLaundry({ date: new Date(3 * day), sets: 2 });
+    await eventsRepository.storeBrougthForCleaningEvent({ date: new Date(4 * day), sets: 1, cleaningTime: 1 });
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(6);
 
     expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: amountOfBeddingSet, inUse: 0, dirty: 0, cleaning: 0, inLaundery: 0 });
@@ -203,7 +216,7 @@ describe('beddingSetstatesReport', () => {
 
   });
 
-  it('show events', () => {
+  it('show events', async () => {
 
     const bookings: Booking[] = [
       {
@@ -213,10 +226,10 @@ describe('beddingSetstatesReport', () => {
       }
     ]
 
-    eventsRepository.storeBookingConfirmed(bookings[0]);
+    await eventsRepository.storeBookingConfirmed(bookings[0]);
 
-    eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
-    eventsRepository.storeOnPickupLaundry({ date: new Date(5 * day), sets: 1 });
+    await eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2 * day), sets: 1, cleaningTime: 1 });
+    await eventsRepository.storeOnPickupLaundry({ date: new Date(5 * day), sets: 1 });
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(5);
 
@@ -227,8 +240,8 @@ describe('beddingSetstatesReport', () => {
     expect(report.days[5]).toMatchObject({ date: new Date(5 * day), events: [{ name: 'Pickup', sets: 1 }] });
   });
 
-  it('initial state', () => {
-    eventsRepository.storeAddBeddingSets({ date: new Date(1 * day), sets: -amountOfBeddingSet }); // reset the initial amount of set
+  it('initial state', async () => {
+    await eventsRepository.storeAddBeddingSets({ date: new Date(1 * day), sets: -amountOfBeddingSet }); // reset the initial amount of set
     const initialState: InitialState = {
       date: dateZero,
       cleaned: 10,
@@ -238,14 +251,14 @@ describe('beddingSetstatesReport', () => {
       inLaundery: 6
     }
 
-    eventsRepository.storeInitialState(initialState);
+    await eventsRepository.storeInitialState(initialState);
 
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(0);
 
     expect(report.days[0]).toMatchObject({ date: dateZero, cleaned: 10, inUse: 9, dirty: 8, cleaning: 7, inLaundery: 6 });
   })
 
-  it('report rebuild when called more than once', () => {
+  it('report rebuild when called more than once', async () => {
 
     const bookings: Booking[] = [
       {
@@ -254,7 +267,7 @@ describe('beddingSetstatesReport', () => {
         beddingSets: 1
       }
     ]
-    eventsRepository.storeBookingConfirmed(bookings[0]);
+    await eventsRepository.storeBookingConfirmed(bookings[0]);
     beddingSetsStatesReport.report(2);
     const report: BeddingSetsStatesReport = beddingSetsStatesReport.report(2);
 

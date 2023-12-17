@@ -2,28 +2,21 @@ import EventsRepository from '../src/infrastructure/repositories/events-reposito
 import { Booking } from '../src/use-case-bedding-sets-states-report.js';
 import { DateTime } from 'luxon';
 
-const storagePath: string = process.env.EVENTS_STORAGE_PATH as string;
 
 // mock fs module: reads what he wrote.
 let mockFileContent: string | undefined = undefined;
-jest.mock('fs', () => {
-    
-    return {
-        readFileSync: jest.fn(() => mockFileContent),
-        writeFileSync: jest.fn((_path, data) => {
-            mockFileContent = data;
-        }),
-        existsSync: jest.fn(() => {
-            return mockFileContent
-        }),
-        unlinkSync: jest.fn()
-    };
-});
 
- // mock persistToDrive function
+ // mock persistToDrive, readStorageFromDrive function
 jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
     return {
-        persistToDrive: jest.fn()
+        persistToDrive: jest.fn((data) => {
+            console.log("persist to mock: ", data);
+            mockFileContent = data;
+        }),
+        readStorageFromDrive: jest.fn(() => {
+            console.log("read from mock: ", mockFileContent);
+            return mockFileContent 
+        }),
     }
 })
 
@@ -32,26 +25,24 @@ beforeAll(() => {
 })
 
 describe('EventsRepository', () => {
-    test('loadFromFile at creation', () => {
-        const eventsRepository = EventsRepository.getInstance();
-
-        expect(EventsRepository.EVENTS_STORAGE_PATH()).toBe(storagePath);
+    test('loadFromPersistence at creation', async () =>  {
+        const eventsRepository = await EventsRepository.getInstance();
 
         const booking: Booking = {
             checkInDate: new Date(2023, 12 - 1, 1),
             checkOutDate: new Date(2023, 12 - 1, 2),
             beddingSets: 2
         }
-        eventsRepository.storeBookingConfirmed(booking);
-        eventsRepository.storeAddBeddingSets({ date: new Date(2023, 12 - 1, 1), sets: 10 });
-        eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1), cleaned: 9, inUse: 8, dirty: 7, cleaning: 6, inLaundery: 1 });
-        eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2023, 12 - 1, 1), sets: 2, cleaningTime: 10 });
-        eventsRepository.storeOnPickupLaundry({ date: new Date(2023, 12 - 1, 1), sets: 2 });
+        await eventsRepository.storeBookingConfirmed(booking);
+        await eventsRepository.storeAddBeddingSets({ date: new Date(2023, 12 - 1, 1), sets: 10 });
+        await eventsRepository.storeInitialState({ date: new Date(2023, 12 - 1, 1), cleaned: 9, inUse: 8, dirty: 7, cleaning: 6, inLaundery: 1 });
+        await eventsRepository.storeBrougthForCleaningEvent({ date: new Date(2023, 12 - 1, 1), sets: 2, cleaningTime: 10 });
+        await eventsRepository.storeOnPickupLaundry({ date: new Date(2023, 12 - 1, 1), sets: 2 });
         const expectedStartReportDate = { date: new Date(2023, 12 - 1, 11), };
-        eventsRepository.storeStartDateReport(expectedStartReportDate);
+        await eventsRepository.storeStartDateReport(expectedStartReportDate);
 
         expect(eventsRepository.startDateReport).toStrictEqual(expectedStartReportDate);
-        const eventsRepositoryReloaded = EventsRepository.renew();
+        const eventsRepositoryReloaded = await EventsRepository.renew();
 
         expect(eventsRepositoryReloaded.bookingsConfirmed.length).toBe(1);
         // expect checkIndate is a date

@@ -11,8 +11,8 @@ import useCaseStartDateInput from './app/console/use-case-start-date-report/star
 export async function promptLoop() {
 
   type Command = 'store-initBeddingSets' | 'store-booking' | 'store-inCleaning' | 'store-pickupAfterCleaning' | 'startDate-report' | 'exit';
-  const askCommand = (): Promise<Command> => {
-    const eventsRepository = EventsRepository.getInstance();
+  const askCommand = async (): Promise<Command> => {
+    const eventsRepository = await EventsRepository.getInstance();
     if (eventsRepository.getEvents()) {
       showReport();
     }

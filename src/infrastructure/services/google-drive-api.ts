@@ -77,10 +77,33 @@ async function saveCredentials(client: JSONClient | OAuth2Client) {
 }
 
 
-async function createOrUpdateFile(authClient: JSONClient | OAuth2Client, 
-                                  fileName: string, 
-                                  folderId: string, content: string) {
-  const drive = google.drive({ version: 'v3', auth: authClient as OAuth2Client });
+async function getFileIdFromFilename(drive: drive_v3.Drive,
+  fileName: string,
+  folderId: string): Promise<string | undefined | null> {
+
+  //const drive = google.drive({ version: 'v3', auth: authClient as OAuth2Client });
+  const fileList = await drive.files.list({
+    q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
+    spaces: 'drive',
+    fields: 'files(id, name)'
+  });
+
+  return (fileList.data.files as drive_v3.Schema$File[])[0]?.id;
+}
+
+async function readToDrive(drive: drive_v3.Drive, fileId: string) {
+  const response = await drive.files.get({
+    fileId: fileId,
+    alt: 'media',
+  }, { responseType: 'json' });
+  return response.data
+}
+
+
+async function createOrUpdateFile(drive: drive_v3.Drive,
+  fileName: string,
+  folderId: string, content: string) {
+
   const fileMetadata = {
     name: fileName,
     parents: [folderId]
@@ -92,14 +115,9 @@ async function createOrUpdateFile(authClient: JSONClient | OAuth2Client,
 
   try {
     // Check if the file exists
-    const fileList = await drive.files.list({
-      q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
-      spaces: 'drive',
-      fields: 'files(id, name)'
-    });
-
+    const existingFileId = await getFileIdFromFilename(drive, fileName, folderId);
     let file;
-    if (fileList.data.files?.length === 0) {
+    if (existingFileId === undefined || existingFileId === null) {
       // File does not exist, create new file
       file = await drive.files.create({
         requestBody: fileMetadata,
@@ -109,9 +127,8 @@ async function createOrUpdateFile(authClient: JSONClient | OAuth2Client,
       console.log('File created, ID:', file.data.id);
     } else {
       // File exists, update existing file
-      const existingFileId = (fileList.data.files as drive_v3.Schema$File[])[0].id;
       file = await drive.files.update({
-        fileId: existingFileId as string,
+        fileId: existingFileId,
         media: media
       });
       console.log('File updated, ID:', existingFileId);
@@ -126,11 +143,30 @@ async function createOrUpdateFile(authClient: JSONClient | OAuth2Client,
 }
 
 
-export function persistToDrive(jsonData: string) {
-  authorize().then((client) => {
+export async function persistToDrive(jsonData: string) {
+  await authorize().then((client) => {
     const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
     const fileName = 'events-storage-test.txt';
-    createOrUpdateFile(client as OAuth2Client, fileName, folderId, jsonData);
+    const drive = google.drive({ version: 'v3', auth: client as OAuth2Client });
+    createOrUpdateFile(drive, fileName, folderId, jsonData);
   }).catch(console.error);
+}
+
+
+
+export async function readStorageFromDrive() {
+  try {
+    const client = await authorize()
+    const drive = google.drive({ version: 'v3', auth: client as OAuth2Client });
+    const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
+    const fileName = 'events-storage-test.txt';
+    const fileId = await getFileIdFromFilename(drive, fileName, folderId);
+    if (fileId !== undefined && fileId !== null) {
+      return await readToDrive(drive, fileId) as string;
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+    throw error;
+  }
 }
 
