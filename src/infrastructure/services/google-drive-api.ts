@@ -20,6 +20,8 @@ const SCOPES = [
 const TOKEN_PATH: string = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
+export const fileName = (): string => { return 'events-storage-dev.json'};
+const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
 
 /**
  * Reads previously authorized credentials from the save file.
@@ -28,6 +30,8 @@ const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
  */
 async function loadSavedCredentialsIfExist() {
   try {
+    //console.log("============= loadSavedCredentialsIfExist =============")
+    //console.log("TOKEN_PATH: ", TOKEN_PATH)
     const content = await fs.readFile(TOKEN_PATH);
 
     const credentials = JSON.parse(content.toString());
@@ -42,7 +46,7 @@ async function loadSavedCredentialsIfExist() {
  *
  */
 async function authorize() {
-  console.log("============= OAuth2Client =============")
+  //console.log("============= OAuth2Client =============")
   let client: JSONClient | OAuth2Client | null = await loadSavedCredentialsIfExist();
   if (client) {
     return client;
@@ -124,15 +128,15 @@ async function createOrUpdateFile(drive: drive_v3.Drive,
         media: media,
         fields: 'id'
       });
-      console.log('File created, ID:', file.data.id);
+      //console.log('File created, ID:', file.data.id);
     } else {
       // File exists, update existing file
       file = await drive.files.update({
         fileId: existingFileId,
         media: media
       });
-      console.log('File updated, ID:', existingFileId);
-      console.log('content:', JSON.stringify(file.config.data, null, 2));
+      //console.log('File updated, ID:', existingFileId);
+      //console.log('content:', JSON.stringify(file.config.data, null, 2));
     }
 
     return file.data.id;
@@ -143,12 +147,11 @@ async function createOrUpdateFile(drive: drive_v3.Drive,
 }
 
 
+
 export async function persistToDrive(jsonData: string) {
   await authorize().then((client) => {
-    const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
-    const fileName = 'events-storage-test.txt';
     const drive = google.drive({ version: 'v3', auth: client as OAuth2Client });
-    createOrUpdateFile(drive, fileName, folderId, jsonData);
+    createOrUpdateFile(drive, fileName(), folderId, jsonData);
   }).catch(console.error);
 }
 
@@ -158,12 +161,12 @@ export async function readStorageFromDrive() {
   try {
     const client = await authorize()
     const drive = google.drive({ version: 'v3', auth: client as OAuth2Client });
-    const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
-    const fileName = 'events-storage-test.txt';
-    const fileId = await getFileIdFromFilename(drive, fileName, folderId);
+    const fileId = await getFileIdFromFilename(drive, fileName(), folderId);
     if (fileId !== undefined && fileId !== null) {
-      return await readToDrive(drive, fileId) as string;
+      const fileContent = await readToDrive(drive, fileId) as string;
+      return JSON.stringify(fileContent);
     }
+    return undefined;
   } catch (error) {
     console.error('An error occurred:', error);
     throw error;

@@ -25,23 +25,23 @@ export default class EventsRepository {
 
     static async getInstance(): Promise<EventsRepository> {
         const instance = new EventsRepository();
-        
+
         await EventsRepository.readFromDriveAndDeserialize(instance)
 
         return instance;
     }
 
     static readFromDriveAndDeserialize = async (instance: EventsRepository) => {
-        const jsonData = await readStorageFromDrive()
+        const jsonData = await readStorageFromDrive();
         if (jsonData !== undefined) {
+            //console.log("Read from DRIVE: \n" + JSON.stringify(jsonData));
             const data = JSON.parse(jsonData) as EventsRepository;
-            console.log("Read from DRIVE: \n" + data);
+            //console.log("parse json: \n" , data);
             EventsRepository.deserialize(instance, data as EventsRepository);
         } else {
-            console.log("=====>>>> No data on drive <<<<=====");
+            //console.log("====>>>> No data found on drive");
         }
     }
-
 
     private constructor() {
         this.additionBeddingSets = [];
@@ -55,7 +55,7 @@ export default class EventsRepository {
         await this.persistToFile();
     }
 
-    async storeBookingConfirmed(booking: Booking)  {
+    async storeBookingConfirmed(booking: Booking) {
         this.bookingsConfirmed.push(booking);
         await this.persistToFile();
     }
@@ -133,8 +133,8 @@ export default class EventsRepository {
     }
 
     private static deserialize(instance: EventsRepository, data: EventsRepository) {
-        console.log("xxxx DESERIALIZING xxxx:\n" + JSON.stringify(data));
-        console.log("data['bookingsConfirmed']", data["bookingsConfirmed"]);
+        //console.log("xxxx DESERIALIZING xxxx:\n" + JSON.stringify(data));
+        //console.log("data['bookingsConfirmed']", data["bookingsConfirmed"]);
 
         instance.bookingsConfirmed = data["bookingsConfirmed"].map((booking: Booking) => {
             return {

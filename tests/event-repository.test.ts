@@ -10,11 +10,11 @@ let mockFileContent: string | undefined = undefined;
 jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
     return {
         persistToDrive: jest.fn((data) => {
-            console.log("persist to mock: ", data);
+            //console.log("persist to mock: ", data);
             mockFileContent = data;
         }),
         readStorageFromDrive: jest.fn(() => {
-            console.log("read from mock: ", mockFileContent);
+            //console.log("read from mock: ", mockFileContent);
             return mockFileContent 
         }),
     }

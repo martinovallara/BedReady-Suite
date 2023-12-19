@@ -21,18 +21,18 @@ jest.mock('fs', () => ({
  jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
   return {
       persistToDrive: jest.fn((data) => {
-        console.log("use-case-persist to mock: ", data);
+        //console.log("use-case-persist to mock: ", data);
           jsonEventsData = data;
       }),
       readStorageFromDrive: jest.fn(() => {
-          console.log("use-case-read from mock: ", jsonEventsData);
+          //console.log("use-case-read from mock: ", jsonEventsData);
           return jsonEventsData 
       }),
   }
 })
 
 beforeEach(async () => {
-  console.log(" | use-caseBeforeEach |");
+  //console.log(" | use-caseBeforeEach |");
   jsonEventsData = undefined;
 
   eventsRepository = await EventsRepository.getInstance();
@@ -43,7 +43,7 @@ beforeEach(async () => {
 
 afterEach(() => {
   jsonEventsData = undefined;
-  console.log("_ use-caseAfterEach _");
+  //console.log("_ use-caseAfterEach _");
 })
 
 describe('beddingSetstatesReport', () => {
