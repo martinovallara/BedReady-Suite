@@ -60,12 +60,12 @@ describe('BeddingSets', () => {
     })
 
     test('onBroughtForCleaning moves first from dirty and if not enough from inUse and clean to cleaning', () => {
-        beddingSets.setup({ cleaned: 1, inUse: 1, dirty: 1, cleaning: 0, inLaundery: 0 });
+        beddingSets.setup({ cleaned: 2, inUse: 1, dirty: 1, cleaning: 0, inLaundery: 0 });
         beddingSets.onBroughtForCleaning(3);
 
         const state = beddingSetsState();
         expect(state.cleaned).toBe(0);
-        expect(state.inUse).toBe(0);
+        expect(state.inUse).toBe(1);
         expect(state.dirty).toBe(0);
         expect(state.cleaning).toBe(3);
         expect(state.inLaundery).toBe(0);

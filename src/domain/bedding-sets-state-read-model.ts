@@ -30,14 +30,12 @@ export default class BeddingSetsReadModel {
     onBroughtForCleaning(sets: number) {
         const containers: Containers = new Map<string, number>([
             ['dirty', this.dirty],
-            ['inUse', this.inUse],
             ['cleaned', this.cleaned]
         ]);
         
         const subtractResult = subtractFromContainers(containers, sets);
 
         this.dirty = subtractResult.get('dirty') as number; 
-        this.inUse = subtractResult.get('inUse') as number ;
         this.cleaned = subtractResult.get('cleaned') as number;
 
         this.cleaning += sets;
