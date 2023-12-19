@@ -1,0 +1,16 @@
+{
+    "service_strategies": [
+        {
+            "service": "typescript-service",
+            "type": "probabilistic",
+            "param": 0.1,
+            "operation_strategies": [
+                {
+                    "operation": "operationName",
+                    "type": "ratelimiting",
+                    "param": 2
+                }
+            ]
+        }
+    ]
+}
