@@ -127,8 +127,6 @@ export default class EventsRepository {
 
     public async persistToFile(): Promise<void> {
         const data = JSON.stringify(this);
-        // fs.writeFileSync(filename, data, 'utf8');
-
         await persistToDrive(data);
     }
 

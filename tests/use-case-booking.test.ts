@@ -10,13 +10,7 @@ let beddingSetsStatesReport: UseCaseBeddingSetsStatesReport;
 let eventsRepository: EventsRepository;
 
 let jsonEventsData: string | undefined = undefined;
-/*
-jest.mock('fs', () => ({
-  ...jest.requireActual('fs'),
-  writeFile: jest.fn(),
-  existsSync: jest.fn().mockReturnValue(false)
-}));
-*/
+
  // mock persistToDrive, readStorageFromDrive function
  jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
   return {

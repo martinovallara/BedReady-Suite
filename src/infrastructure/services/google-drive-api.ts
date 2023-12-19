@@ -20,7 +20,14 @@ const SCOPES = [
 const TOKEN_PATH: string = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
-export const fileName = (): string => { return 'events-storage-dev.json'};
+export const fileName = (): string => { 
+  // read from env variable by dotenv
+  const fileName = process.env.EVENTS_STORAGE_FILE_NAME;
+  if (fileName === undefined) {
+    throw new Error("EVENTS_STORAGE_FILE_NAME env variable not set")
+  }
+  return fileName;
+};
 const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
 
 /**
@@ -30,7 +37,6 @@ const folderId = '1NdiocoeYAudPCGvf5icMNryXQ7-222K3';
  */
 async function loadSavedCredentialsIfExist() {
   try {
-    //console.log("============= loadSavedCredentialsIfExist =============")
     //console.log("TOKEN_PATH: ", TOKEN_PATH)
     const content = await fs.readFile(TOKEN_PATH);
 
@@ -159,6 +165,7 @@ export async function persistToDrive(jsonData: string) {
 
 export async function readStorageFromDrive() {
   try {
+    console.log("readStorageFromDrive from:  ", fileName())
     const client = await authorize()
     const drive = google.drive({ version: 'v3', auth: client as OAuth2Client });
     const fileId = await getFileIdFromFilename(drive, fileName(), folderId);

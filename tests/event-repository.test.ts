@@ -2,8 +2,6 @@ import EventsRepository from '../src/infrastructure/repositories/events-reposito
 import { Booking } from '../src/use-case-bedding-sets-states-report.js';
 import { DateTime } from 'luxon';
 
-
-// mock fs module: reads what he wrote.
 let mockFileContent: string | undefined = undefined;
 
  // mock persistToDrive, readStorageFromDrive function
