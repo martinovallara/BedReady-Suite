@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 let mockFileContent: string | undefined = undefined;
 
  // mock persistToDrive, readStorageFromDrive function
-jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
+jest.mock('../src/infrastructure/services/google-drive-storage.js', () => {
     return {
         persistToDrive: jest.fn((data) => {
             //console.log("persist to mock: ", data);

@@ -2,5 +2,5 @@
     "search.exclude": {
         "dist/**": true
     },
-    "jest.jestCommandLine": "jest --maxWorkers=1"
+    //"jest.jestCommandLine": "jest --maxWorkers=1"
 }

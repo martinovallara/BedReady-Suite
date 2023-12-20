@@ -12,7 +12,7 @@ let eventsRepository: EventsRepository;
 let jsonEventsData: string | undefined = undefined;
 
  // mock persistToDrive, readStorageFromDrive function
- jest.mock('../src/infrastructure/services/google-drive-api.js', () => {
+ jest.mock('../src/infrastructure/services/google-drive-storage.js', () => {
   return {
       persistToDrive: jest.fn((data) => {
         //console.log("use-case-persist to mock: ", data);

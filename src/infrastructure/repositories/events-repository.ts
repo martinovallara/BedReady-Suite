@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { InitialState } from "../../interfaces/bedding-sets-states-report.js";
 import { AdditionBeddingSets, Booking, InCleaning, Pickup } from "../../use-case-bedding-sets-states-report.js";
-import { persistToDrive, readStorageFromDrive } from "../services/google-drive-api.js";
+import { persistToDrive, readStorageFromDrive } from "../services/google-drive-storage.js";
 
 type StartDateReport = {
     date: Date;
