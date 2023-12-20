@@ -11,8 +11,8 @@
     "bedready-suite": "dist/bedready-suite.js"
   },
   "scripts": {
-    "test": "jest -i",
-    "test-watch": "jest -i --watch",
+    "test": "jest",
+    "test-watch": "jest --watch",
     "build": "tsc ",
     "build:watch": "tsc --watch",
     "start-dev": "set NODE_ENV=development&&node dist/index.js",

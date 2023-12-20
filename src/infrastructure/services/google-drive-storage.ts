@@ -18,30 +18,31 @@ const fileName = (): string => {
 
 export async function persistToDrive(jsonData: string) {
   await authorize().then((client) => {
-    //const drive = google.drive({ version: 'v3', auth: client as OAuth2Client });
-    // create drive object from client using  @googleapis/drive
     const drive = Drive.drive({ version: 'v3', auth: client as OAuth2Client });
 
     googleDriveApis.createOrUpdateFile(drive, fileName(), folderId, jsonData);
-    setJsonResponseCache( jsonData);
+    setJsonResponseCache(jsonData);
   }).catch(console.error);
 }
 
 export async function readStorageFromDrive() {
-  
+
   if (getJsonResponseCache() !== undefined) {
     return getJsonResponseCache();
   }
 
   try {
-    console.log("readStorageFromDrive from:  ", fileName())
+    // log only in production
+    if (process.env.NODE_ENV === 'production') {
+      console.log("readStorageFromDrive from:  ", fileName())
+    }
     const client = await authorize()
     const drive = Drive.drive({ version: 'v3', auth: client as OAuth2Client });
     const fileId = await googleDriveApis.getFileIdFromFilename(drive, fileName(), folderId);
     if (fileId !== undefined && fileId !== null) {
       const jsonResponse = await googleDriveApis.readJsonContentFromDrive(drive, fileId);
       setJsonResponseCache(jsonResponse);
-      return getJsonResponseCache();
+      return jsonResponse;
     }
     return undefined;
   } catch (error) {

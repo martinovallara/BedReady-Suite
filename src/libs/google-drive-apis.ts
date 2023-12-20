@@ -4,8 +4,7 @@ import { drive_v3 } from "@googleapis/drive";
 const googleDriveApis = {
     createOrUpdateFile,
     getFileIdFromFilename,
-    readJsonContentFromDrive,
-    readToDrive
+    readJsonContentFromDrive
 }
 
 export default googleDriveApis;
