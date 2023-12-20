@@ -1,5 +1,5 @@
 
-import { drive_v3 } from 'googleapis';
+import { drive_v3 } from "@googleapis/drive";
 
 const googleDriveApis = {
     createOrUpdateFile,

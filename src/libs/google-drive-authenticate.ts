@@ -1,8 +1,7 @@
 import { authenticate } from '@google-cloud/local-auth';
 import fs from 'fs/promises';
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client, GoogleAuth } from 'google-auth-library';
 import { JSONClient } from 'google-auth-library/build/src/auth/googleauth.js';
-import { google } from 'googleapis';
 import path from 'path';
 
 // If modifying these scopes, delete token.json.
@@ -17,7 +16,13 @@ const SCOPES = [
   // time.
   const TOKEN_PATH: string = path.join(process.cwd(), 'token.json');
   const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
-  
+  type Credentials = {
+    type: string;
+    client_id: string;
+    client_secret: string;
+    refresh_token: string;
+  };
+
   /**
    * Load or request or authorization to call APIs.
    *
@@ -50,13 +55,20 @@ const SCOPES = [
       //console.log("TOKEN_PATH: ", TOKEN_PATH)
       const content = await fs.readFile(TOKEN_PATH);
   
-      const credentials = JSON.parse(content.toString());
-      return google.auth.fromJSON(credentials);
+       // deserialize content to JSONClient 
+      const credentials: Credentials = JSON.parse(content.toString());
+      // create JSONClient from credentials
+      const auth = new GoogleAuth();
+      const client = await auth.fromJSON(credentials);
+      return client;
+      
+
     } catch (err) {
       return null;
     }
   }
   
+
 
   /**
  * Serializes credentials to a file comptible with GoogleAUth.fromJSON.
@@ -68,7 +80,7 @@ async function saveCredentials(client: JSONClient | OAuth2Client) {
     const content = await fs.readFile(CREDENTIALS_PATH);
     const keys = JSON.parse(content.toString());
     const key = keys.installed || keys.web;
-    const payload = JSON.stringify({
+    const payload  = JSON.stringify({
       type: 'authorized_user',
       client_id: key.client_id,
       client_secret: key.client_secret,
