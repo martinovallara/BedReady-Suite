@@ -32,7 +32,6 @@ export async function readStorageFromDrive() {
   }
 
   try {
-    // log only in production
     if (process.env.NODE_ENV === 'production') {
       console.log("readStorageFromDrive from:  ", fileName())
     }
